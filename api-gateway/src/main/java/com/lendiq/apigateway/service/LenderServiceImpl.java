@@ -7,6 +7,8 @@ import com.lendiq.apigateway.dto.response.LenderStatsResponse;
 import com.lendiq.apigateway.dsa.IntervalTree;
 import com.lendiq.apigateway.entity.Lender;
 import com.lendiq.apigateway.exception.ResourceNotFoundException;
+import com.lendiq.apigateway.kafka.event.LenderChangedEvent;
+import com.lendiq.apigateway.kafka.producer.LenderEventProducer;
 import com.lendiq.apigateway.mapper.LenderMapper;
 import com.lendiq.apigateway.repository.LenderRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class LenderServiceImpl implements LenderService {
     private final LenderRepository lenderRepository;
     private final LenderMapper lenderMapper;
     private final IntervalTree intervalTree;
+    private final LenderEventProducer lenderEventProducer;
 
     @Override
     @Transactional
@@ -43,7 +46,9 @@ public class LenderServiceImpl implements LenderService {
         intervalTree.rebuild(activeLenders);
 
         log.info("Lender onboarded [id={}, name={}]", lender.getId(), lender.getName());
-        return lenderMapper.toResponse(lender);
+        LenderResponse response = lenderMapper.toResponse(lender);
+        publishLenderEvent(lender, "ONBOARDED");
+        return response;
     }
 
     @Override
@@ -75,7 +80,9 @@ public class LenderServiceImpl implements LenderService {
         intervalTree.rebuild(activeLenders);
 
         log.info("Lender rules updated [id={}, name={}]", lender.getId(), lender.getName());
-        return lenderMapper.toResponse(lender);
+        LenderResponse response = lenderMapper.toResponse(lender);
+        publishLenderEvent(lender, "RULES_UPDATED");
+        return response;
     }
 
     @Override
@@ -92,6 +99,24 @@ public class LenderServiceImpl implements LenderService {
         intervalTree.rebuild(activeLenders);
 
         log.info("Lender paused [id={}]", id);
+        publishLenderEvent(lender, "PAUSED");
+    }
+
+    private void publishLenderEvent(Lender lender, String changeType) {
+        LenderChangedEvent event = new LenderChangedEvent(
+            java.util.UUID.randomUUID(),
+            lender.getId(),
+            changeType,
+            lender.getIncomeMin(),
+            lender.getIncomeMax(),
+            lender.getAgeMin(),
+            lender.getAgeMax(),
+            lender.getScoreThreshold(),
+            lender.getMaxLoanAmount(),
+            lender.isActive(),
+            java.time.Instant.now()
+        );
+        lenderEventProducer.publish(event);
     }
 
     @Override

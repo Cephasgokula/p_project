@@ -19,7 +19,7 @@ public interface LenderRepository extends JpaRepository<Lender, UUID> {
                COUNT(d.id) AS referrals,
                SUM(CASE WHEN d.outcome = 'APPROVE' THEN 1 ELSE 0 END) AS approvals
         FROM Lender l
-        LEFT JOIN Decision d ON d.lenderId = l.id AND d.decidedAt >= :since
+        LEFT JOIN Decision d ON d.lender.id = l.id AND d.decidedAt >= :since
         WHERE l.active = true
         GROUP BY l.id, l.name
     """)

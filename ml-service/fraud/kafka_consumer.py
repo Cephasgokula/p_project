@@ -9,6 +9,7 @@ import json
 import os
 import logging
 import time
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -55,15 +56,24 @@ def run():
         )
 
         if time.time() - last_flush >= batch_timeout or len(buffer) >= 50:
+            t0 = time.time()
             results = detector.detect(buffer)
+            inference_ms = int((time.time() - t0) * 1000)
             for applicant_id, fraud_prob in results.items():
+                is_fraud_ring = fraud_prob > 0.75
                 producer.send(
                     OUT_TOPIC,
                     key=str(applicant_id).encode(),
                     value={
-                        "applicant_id": str(applicant_id),
-                        "fraud_prob": fraud_prob,
-                        "detected_at": time.time(),
+                        "eventId": str(uuid.uuid4()),
+                        "applicationId": str(applicant_id),
+                        "applicantId": str(applicant_id),
+                        "fraudProbability": fraud_prob,
+                        "ringId": None,
+                        "isFraudRing": is_fraud_ring,
+                        "ringSize": 0,
+                        "inferenceMs": inference_ms,
+                        "processedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                     },
                 )
             buffer.clear()

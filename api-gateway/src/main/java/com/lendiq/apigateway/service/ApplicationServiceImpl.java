@@ -1,6 +1,5 @@
 package com.lendiq.apigateway.service;
 
-import com.lendiq.apigateway.config.AppProperties;
 import com.lendiq.apigateway.dto.request.ApplicationFilterRequest;
 import com.lendiq.apigateway.dto.request.ApplicationSubmitRequest;
 import com.lendiq.apigateway.dto.request.BatchScoreRequest;
@@ -46,7 +45,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final DecisionMapper decisionMapper;
     private final ApplicationEventProducer eventProducer;
     private final FraudService fraudService;
-    private final AppProperties appProperties;
 
     @Override
     @Transactional

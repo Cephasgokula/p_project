@@ -1,9 +1,9 @@
 version: "3.9"
 
 x-common-env: &common-env
-  SPRING_DATASOURCE_URL:   jdbc:postgresql://postgres:5432/lendiq
-  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-  REDIS_HOST:              redis
+  SPRING_DATASOURCE_URL:              jdbc:postgresql://postgres:5432/lendiq
+  SPRING_KAFKA_BOOTSTRAP_SERVERS:     kafka:9092
+  SPRING_DATA_REDIS_HOST:             redis
 
 services:
 
@@ -162,17 +162,19 @@ services:
   # ── Frontends ─────────────────────────────────────────────────────
   frontend-applicant:
     build:
-      context:    ./frontend/applicant
+      context:    ./frontend
+      dockerfile: applicant/Dockerfile
       target:     dev
     ports: ["3000:3000"]
     environment:
       REACT_APP_API_URL: http://localhost:8080/api/v1
     volumes:
-      - ./frontend/applicant/src:/app/src:ro
+      - ./frontend/applicant/src:/app/applicant/src:ro
 
   frontend-lender:
     build:
-      context:    ./frontend/lender
+      context:    ./frontend
+      dockerfile: lender/Dockerfile
       target:     dev
     ports: ["3001:3000"]
     environment:
@@ -180,7 +182,8 @@ services:
 
   frontend-admin:
     build:
-      context:    ./frontend/admin
+      context:    ./frontend
+      dockerfile: admin/Dockerfile
       target:     dev
     ports: ["3002:3000"]
     environment:

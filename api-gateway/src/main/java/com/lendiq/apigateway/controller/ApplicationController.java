@@ -2,7 +2,6 @@ package com.lendiq.apigateway.controller;
 
 import com.lendiq.apigateway.dto.request.ApplicationFilterRequest;
 import com.lendiq.apigateway.dto.request.ApplicationSubmitRequest;
-import com.lendiq.apigateway.dto.request.BatchScoreRequest;
 import com.lendiq.apigateway.dto.response.*;
 import com.lendiq.apigateway.service.ApplicationService;
 import jakarta.validation.Valid;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
