@@ -1,0 +1,46 @@
+syntax = "proto3";
+package lendiq.scoring;
+option java_package = "com.lendiq.grpc";
+
+// Request sent by Java API Gateway
+message ScoringRequest {
+  string application_id    = 1;
+  string applicant_id      = 2;
+  double income            = 3;
+  double existing_debt     = 4;
+  double requested_amount  = 5;
+  int32  term_months       = 6;
+  int32  age               = 7;
+  int32  employment_months = 8;
+  int32  existing_loans    = 9;
+  double credit_bureau_score = 10;
+  string loan_purpose      = 11;
+  string device_fp         = 12;
+  int32  velocity_count    = 13;
+}
+
+// Response returned to Java
+message ScoringResponse {
+  string application_id  = 1;
+  double lgbm_score      = 2;
+  double default_prob    = 3;
+  double fairness_score  = 4;
+  string model_version   = 5;
+  map<string, double> shap_values = 6;
+  string error           = 7;
+}
+
+// gRPC service definition
+service ScoringService {
+  rpc Score(ScoringRequest) returns (ScoringResponse);
+  rpc ScoreBatch(stream ScoringRequest) returns (stream ScoringResponse);
+  rpc GetModelInfo(ModelInfoRequest) returns (ModelInfoResponse);
+}
+
+message ModelInfoRequest {}
+message ModelInfoResponse {
+  string lgbm_version    = 1;
+  string gnn_version     = 2;
+  string last_retrain    = 3;
+  double current_auc_roc = 4;
+}

@@ -1,0 +1,39 @@
+groups:
+  - name: lendiq_alerts
+    rules:
+
+      # p99 latency > 300ms
+      - alert: HighScoringLatency
+        expr: histogram_quantile(0.99, rate(lendiq_score_latency_seconds_bucket[5m])) > 0.3
+        for: 2m
+        labels: { severity: warning }
+        annotations:
+          summary: "Scoring p99 latency > 300ms"
+          description: "p99={{ $value | humanizeDuration }}"
+
+      # Kafka consumer lag > 5000 messages
+      - alert: KafkaConsumerLag
+        expr: kafka_consumer_group_lag{topic="loan-apps"} > 5000
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Kafka consumer lag spiking on loan-apps"
+          description: "lag={{ $value }} messages"
+
+      # Model PSI breach
+      - alert: ModelDriftDetected
+        expr: lendiq_psi_score > 0.2
+        for: 0m
+        labels: { severity: warning }
+        annotations:
+          summary: "Feature drift detected — retrain required"
+          description: "feature={{ $labels.feature }} PSI={{ $value }}"
+
+      # Fairness parity gap
+      - alert: FairnessParityBreach
+        expr: lendiq_parity_diff > 0.15
+        for: 0m
+        labels: { severity: critical }
+        annotations:
+          summary: "Demographic parity gap exceeds 15%"
+          description: "attribute={{ $labels.attribute }} gap={{ $value }}"

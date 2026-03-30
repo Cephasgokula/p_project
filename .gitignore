@@ -1,0 +1,86 @@
+# ─── IDE & Editor ────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ─── OS ──────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Environment & Secrets ───────────────────────────────────────
+.env
+.env.local
+.env.*.local
+# keep .env.example committed
+!.env.example
+
+# ─── Node / Frontend ─────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/admin/node_modules/
+frontend/applicant/node_modules/
+frontend/lender/node_modules/
+frontend/admin/build/
+frontend/applicant/build/
+frontend/lender/build/
+frontend/*/dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Java / Gradle (api-gateway) ─────────────────────────────────
+api-gateway/build/
+api-gateway/.gradle/
+api-gateway/out/
+api-gateway/bin/
+*.class
+*.jar
+!api-gateway/gradle/wrapper/gradle-wrapper.jar
+
+# ─── Python / ML service ─────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pycache
+venv/
+.venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.coverage
+htmlcov/
+
+# ─── ML Models & Data ────────────────────────────────────────────
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.onnx
+*.pt
+*.pth
+models/
+data/
+mlruns/
+mlartifacts/
+
+# ─── Logs ────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Docker ──────────────────────────────────────────────────────
+.docker/
+
+# ─── Airflow (retraining) ────────────────────────────────────────
+retraining/logs/
+retraining/plugins/
+airflow.db
+airflow.cfg

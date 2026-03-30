@@ -1,0 +1,54 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Java tests
+        run: cd api-gateway && ./gradlew test --no-daemon
+      - name: Python tests
+        run: cd ml-service && pip install -r requirements.txt && pytest tests/
+
+  build-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & push API Gateway
+        uses: docker/build-push-action@v5
+        with:
+          context: api-gateway
+          push: true
+          tags: ghcr.io/lendiq/api-gateway:latest,ghcr.io/lendiq/api-gateway:${{ github.sha }}
+      - name: Build & push ML Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ml-service
+          push: true
+          tags: ghcr.io/lendiq/ml-service:latest,ghcr.io/lendiq/ml-service:${{ github.sha }}
+
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to k8s
+        run: |
+          kubectl set image deployment/api-gateway \
+            api-gateway=ghcr.io/lendiq/api-gateway:${{ github.sha }} \
+            -n lendiq
+          kubectl set image deployment/ml-service \
+            ml-service=ghcr.io/lendiq/ml-service:${{ github.sha }} \
+            -n lendiq
+          kubectl rollout status deployment/api-gateway -n lendiq
+          kubectl rollout status deployment/ml-service  -n lendiq

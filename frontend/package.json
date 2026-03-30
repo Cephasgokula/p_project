@@ -1,0 +1,49 @@
+{
+  "name": "lendiq-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "applicant",
+    "lender",
+    "admin"
+  ],
+  "dependencies": {
+    "@tanstack/react-query": "^5.28.0",
+    "ag-grid-community": "^31.2.0",
+    "ag-grid-react": "^31.2.0",
+    "axios": "^1.6.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.12.2",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1"
+  },
+  "scripts": {
+    "start:applicant": "npm start --workspace=applicant",
+    "start:lender": "npm start --workspace=lender",
+    "start:admin": "npm start --workspace=admin",
+    "build:applicant": "npm run build --workspace=applicant",
+    "build:lender": "npm run build --workspace=lender",
+    "build:admin": "npm run build --workspace=admin",
+    "build:all": "npm run build --workspaces",
+    "test:all": "npm test --workspaces"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lendiq-config
+  namespace: lendiq
+data:
+  kafka-bootstrap:        "kafka-headless.lendiq:9092"
+  redis-host:             "redis-master.lendiq"
+  ml-service-host:        "ml-service.lendiq:50051"
+  champion-model-version: "1.0.0"
+  velocity-threshold:     "5"
+  velocity-window-secs:   "3600"
+  dt-weight:              "0.40"
+  ml-weight:              "0.35"
+  fairness-weight:        "0.25"
+  approve-threshold:      "700.0"
+  refer-threshold:        "550.0"

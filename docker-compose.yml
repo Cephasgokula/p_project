@@ -1,0 +1,207 @@
+version: "3.9"
+
+x-common-env: &common-env
+  SPRING_DATASOURCE_URL:   jdbc:postgresql://postgres:5432/lendiq
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  REDIS_HOST:              redis
+
+services:
+
+  # ── Infrastructure ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB:       lendiq
+      POSTGRES_USER:     lendiq_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports: ["5432:5432"]
+    healthcheck:
+      test:     ["CMD", "pg_isready", "-U", "lendiq_user"]
+      interval: 10s
+      timeout:  5s
+      retries:  5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports: ["2181:2181"]
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_BROKER_ID:                    1
+      KAFKA_ZOOKEEPER_CONNECT:            zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS:         PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE:    "false"
+    ports: ["29092:29092"]
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 15s
+      timeout:  10s
+      retries:  10
+
+  kafka-setup:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on: [kafka]
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists \
+         --topic loan-apps         --partitions 12 --replication-factor 1
+       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists \
+         --topic fraud-results     --partitions 4  --replication-factor 1
+       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists \
+         --topic scoring-results   --partitions 4  --replication-factor 1
+       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists \
+         --topic lender-events     --partitions 2  --replication-factor 1"
+    restart: "no"
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports: ["6379:6379"]
+    healthcheck:
+      test:     ["CMD", "redis-cli", "ping"]
+      interval: 10s
+
+  # ── Backend ───────────────────────────────────────────────────────
+  api-gateway:
+    build:
+      context:    ./api-gateway
+      dockerfile: Dockerfile
+    ports: ["8080:8080"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      kafka:    { condition: service_healthy }
+      redis:    { condition: service_healthy }
+    environment:
+      <<: *common-env
+      SPRING_DATASOURCE_USERNAME:   lendiq_user
+      SPRING_DATASOURCE_PASSWORD:   ${POSTGRES_PASSWORD}
+      JWT_SECRET:                   ${JWT_SECRET}
+      ML_SERVICE_HOST:              ml-service:50051
+      AWS_S3_BUCKET:                ${S3_BUCKET:-lendiq-models}
+      AWS_ACCESS_KEY_ID:            ${AWS_ACCESS_KEY_ID:-localstack}
+      AWS_SECRET_ACCESS_KEY:        ${AWS_SECRET_ACCESS_KEY:-localstack}
+    healthcheck:
+      test:     ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
+      interval: 15s
+      timeout:  5s
+      retries:  5
+
+  ml-service:
+    build:
+      context:    ./ml-service
+      dockerfile: Dockerfile
+    ports: ["50051:50051", "9090:9090"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      GRPC_PORT:       50051
+      KAFKA_BOOTSTRAP: kafka:9092
+      FRAUD_TOPIC:     fraud-results
+      MODEL_BUCKET:    ${S3_BUCKET:-lendiq-models}
+      MODEL_VERSION:   1.0.0
+      AWS_ACCESS_KEY_ID:     ${AWS_ACCESS_KEY_ID:-localstack}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-localstack}
+      LGBM_BOOSTER_PATH: /models/lgbm.txt
+      MODEL_PATH:        /models/lgbm.onnx
+      GNN_MODEL_PATH:    /models/gnn.pt
+    volumes:
+      - ./ml-service/models:/models:ro
+
+  gnn-consumer:
+    build:
+      context:    ./ml-service
+      dockerfile: Dockerfile
+    command: python /app/fraud/kafka_consumer.py
+    depends_on: [kafka-setup, ml-service]
+    environment:
+      KAFKA_BOOTSTRAP: kafka:9092
+      MODEL_BUCKET:    ${S3_BUCKET:-lendiq-models}
+      GNN_MODEL_PATH:  /models/gnn.pt
+      AWS_ACCESS_KEY_ID:     ${AWS_ACCESS_KEY_ID:-localstack}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-localstack}
+    volumes:
+      - ./ml-service/models:/models:ro
+
+  # ── Airflow ────────────────────────────────────────────────────────
+  airflow:
+    image: apache/airflow:2.9.0
+    ports: ["8081:8080"]
+    depends_on: [postgres]
+    environment:
+      AIRFLOW__CORE__EXECUTOR:        LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://lendiq_user:${POSTGRES_PASSWORD}@postgres:5432/lendiq
+      AIRFLOW__CORE__LOAD_EXAMPLES:   "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${JWT_SECRET}
+    volumes:
+      - ./retraining/dags:/opt/airflow/dags
+      - ./ml-service:/opt/ml-service
+    command: ["bash", "-c",
+      "airflow db migrate && airflow users create -u admin -p admin \
+       -f LendIQ -l Admin -r Admin -e admin@lendiq.local && airflow webserver"]
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.0
+    depends_on: [airflow]
+    environment:
+      AIRFLOW__CORE__EXECUTOR:        LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://lendiq_user:${POSTGRES_PASSWORD}@postgres:5432/lendiq
+    volumes:
+      - ./retraining/dags:/opt/airflow/dags
+      - ./ml-service:/opt/ml-service
+    command: ["airflow", "scheduler"]
+
+  # ── Frontends ─────────────────────────────────────────────────────
+  frontend-applicant:
+    build:
+      context:    ./frontend/applicant
+      target:     dev
+    ports: ["3000:3000"]
+    environment:
+      REACT_APP_API_URL: http://localhost:8080/api/v1
+    volumes:
+      - ./frontend/applicant/src:/app/src:ro
+
+  frontend-lender:
+    build:
+      context:    ./frontend/lender
+      target:     dev
+    ports: ["3001:3000"]
+    environment:
+      REACT_APP_API_URL: http://localhost:8080/api/v1
+
+  frontend-admin:
+    build:
+      context:    ./frontend/admin
+      target:     dev
+    ports: ["3002:3000"]
+    environment:
+      REACT_APP_API_URL: http://localhost:8080/api/v1
+
+  # ── Observability ─────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ["9091:9090"]
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    ports: ["3003:3000"]
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+volumes:
+  postgres_data:
+  grafana_data:

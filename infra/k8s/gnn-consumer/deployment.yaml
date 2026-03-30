@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gnn-consumer
+  namespace: lendiq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gnn-consumer
+  template:
+    metadata:
+      labels:
+        app: gnn-consumer
+    spec:
+      containers:
+        - name: gnn-consumer
+          image: ghcr.io/lendiq/ml-service:latest
+          command: ["python", "/app/fraud/kafka_consumer.py"]
+          env:
+            - name: KAFKA_BOOTSTRAP
+              valueFrom:
+                configMapKeyRef:
+                  name: lendiq-config
+                  key: kafka-bootstrap
+            - name: MODEL_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: lendiq-secrets
+                  key: model-bucket
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "3Gi"
