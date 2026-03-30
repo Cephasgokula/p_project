@@ -40,6 +40,7 @@ public class Lender {
     @Column(name = "webhook_url",nullable = false)
     private String webhookUrl;
 
+    @Builder.Default
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private boolean active = true;
 }

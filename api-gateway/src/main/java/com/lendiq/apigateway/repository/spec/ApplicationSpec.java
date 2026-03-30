@@ -1,6 +1,6 @@
 package com.lendiq.apigateway.repository.spec;
 
-import com.lendiq.dto.request.ApplicationFilterRequest;
+import com.lendiq.apigateway.dto.request.ApplicationFilterRequest;
 import com.lendiq.apigateway.entity.Application;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.*;
@@ -13,16 +13,16 @@ public class ApplicationSpec {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (f.getStatus() != null)
-                predicates.add(cb.equal(root.get("status"), f.getStatus()));
-            if (f.getFrom() != null)
-                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), f.getFrom()));
-            if (f.getTo() != null)
-                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), f.getTo()));
-            if (f.getChannel() != null)
-                predicates.add(cb.equal(root.get("sourceChannel"), f.getChannel()));
-            if (f.getApplicantId() != null)
-                predicates.add(cb.equal(root.get("applicantId"), f.getApplicantId()));
+            if (f.status() != null)
+                predicates.add(cb.equal(root.get("status"), f.status()));
+            if (f.from() != null)
+                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), f.from()));
+            if (f.to() != null)
+                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), f.to()));
+            if (f.channel() != null)
+                predicates.add(cb.equal(root.get("sourceChannel"), f.channel()));
+            if (f.applicantId() != null)
+                predicates.add(cb.equal(root.get("applicant").get("id"), f.applicantId()));
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };

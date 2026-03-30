@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LendIQ — Project Document</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand:   #1E3A5F;
+  --accent:  #2563EB;
+  --teal:    #0D9488;
+  --coral:   #E05A3A;
+  --amber:   #D97706;
+  --green:   #16A34A;
+  --purple:  #7C3AED;
+  --light:   #F0F4FA;
+  --border:  #CBD5E1;
+  --text:    #1E293B;
+  --muted:   #64748B;
+  --white:   #FFFFFF;
+  --code-bg: #F1F5F9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  background: #F8FAFC;
+}
+
+/* ── Layout ── */
+.page { max-width: 960px; margin: 0 auto; background: white; }
+
+/* ── Cover ── */
+.cover {
+  min-height: 100vh;
+  background: var(--brand);
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start;
+  padding: 80px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute; top: -120px; right: -120px;
+  width: 520px; height: 520px;
+  border: 1.5px solid rgba(255,255,255,0.07);
+  border-radius: 50%;
+}
+.cover::after {
+  content: '';
+  position: absolute; bottom: -80px; right: 80px;
+  width: 320px; height: 320px;
+  border: 1.5px solid rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.cover-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 28px;
+}
+.cover h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 88px; line-height: 1;
+  color: white;
+  margin-bottom: 12px;
+  letter-spacing: -2px;
+}
+.cover-sub {
+  font-size: 20px; font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  max-width: 520px;
+  margin-bottom: 48px;
+}
+.cover-divider {
+  width: 64px; height: 2px;
+  background: var(--accent);
+  margin-bottom: 48px;
+}
+.cover-meta {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  margin-bottom: 64px;
+}
+.cover-meta-item { color: rgba(255,255,255,0.55); font-size: 13px; }
+.cover-meta-item strong { color: white; display: block; font-size: 15px; margin-bottom: 2px; }
+.tech-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  padding: 5px 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── TOC ── */
+.toc { padding: 64px 80px; border-bottom: 1px solid var(--border); }
+.toc h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; color: var(--brand);
+  margin-bottom: 32px;
+}
+.toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 40px; }
+.toc-item {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid #F1F5F9;
+  text-decoration: none; color: var(--text);
+  font-size: 14px; transition: color 0.15s;
+}
+.toc-item:hover { color: var(--accent); }
+.toc-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  min-width: 24px; font-weight: 500;
+}
+
+/* ── Section ── */
+.section { padding: 64px 80px; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+
+.section-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 36px;
+}
+.section-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; font-weight: 500;
+  color: var(--accent);
+  background: #EFF6FF;
+  padding: 4px 10px; border-radius: 6px;
+}
+.section h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px; color: var(--brand);
+}
+
+h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--brand);
+  margin: 40px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--light);
+}
+h3 {
+  font-size: 15px; font-weight: 700;
+  color: var(--teal);
+  margin: 28px 0 10px;
+}
+h4 { font-size: 14px; font-weight: 600; color: var(--text); margin: 20px 0 8px; }
+
+p { margin-bottom: 14px; color: var(--text); font-size: 15px; }
+
+/* ── Info table (key-value) ── */
+.info-table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; }
+.info-table tr:nth-child(odd) td { background: var(--light); }
+.info-table td {
+  padding: 11px 16px;
+  font-size: 14px; vertical-align: top;
+  border: 1px solid var(--border);
+}
+.info-table td:first-child { font-weight: 600; width: 220px; color: var(--brand); white-space: nowrap; }
+
+/* ── Data table ── */
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; font-size: 13px; }
+.data-table thead tr { background: var(--brand); }
+.data-table thead th {
+  padding: 11px 14px; text-align: left;
+  color: white; font-weight: 600;
+  font-size: 12px; letter-spacing: 0.03em;
+}
+.data-table tbody tr:nth-child(even) { background: var(--light); }
+.data-table tbody tr:hover { background: #EFF6FF; }
+.data-table tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+.data-table tbody td:first-child { font-weight: 600; color: var(--brand); }
+
+/* ── Method badges ── */
+.badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 4px; font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+}
+.badge-get    { background: #D1FAF5; color: #0D6E66; }
+.badge-post   { background: #DBEAFE; color: #1D4ED8; }
+.badge-put    { background: #FEF3C7; color: #92400E; }
+.badge-patch  { background: #EDE9FE; color: #5B21B6; }
+.badge-delete { background: #FEE2E2; color: #991B1B; }
+
+/* ── Code block ── */
+pre, code {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+pre {
+  background: #0F172A; color: #E2E8F0;
+  padding: 20px 24px; border-radius: 10px;
+  margin: 12px 0 24px; overflow-x: auto;
+  line-height: 1.7;
+}
+code { background: var(--code-bg); color: var(--brand); padding: 2px 6px; border-radius: 4px; }
+
+/* ── Bullets ── */
+ul, ol { padding-left: 24px; margin: 10px 0 18px; }
+ul li, ol li { margin: 6px 0; font-size: 14px; line-height: 1.6; }
+ul li::marker { color: var(--accent); }
+
+/* ── Callout boxes ── */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: #EFF6FF;
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 20px 0;
+}
+.callout.teal { border-color: var(--teal); background: #F0FDFA; }
+.callout.coral { border-color: var(--coral); background: #FFF7F5; }
+.callout.amber { border-color: var(--amber); background: #FFFBEB; }
+.callout p { margin: 0; font-size: 14px; }
+.callout strong { color: var(--brand); }
+
+/* ── Week cards ── */
+.week-grid { display: grid; gap: 16px; margin: 20px 0; }
+.week-card {
+  display: grid; grid-template-columns: 100px 1fr;
+  gap: 0; border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.week-label {
+  background: var(--brand); color: white;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  text-align: center; gap: 4px;
+}
+.week-label span { font-size: 22px; font-weight: 700; }
+.week-body { padding: 16px 20px; background: white; }
+.week-body h4 { margin: 0 0 6px; color: var(--accent); font-size: 14px; }
+.week-body p { margin: 0 0 8px; font-size: 13px; color: var(--text); }
+.week-done { font-size: 12px; color: var(--teal); font-weight: 600; }
+.week-done::before { content: '✓ '; }
+
+/* ── DSA card ── */
+.dsa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.dsa-card {
+  border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.dsa-card-head {
+  padding: 14px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.dsa-card-head h4 { margin: 0; font-size: 14px; color: white; }
+.dsa-badge {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  background: rgba(255,255,255,0.2); color: white;
+  padding: 3px 8px; border-radius: 4px;
+}
+.dsa-card-body { padding: 14px 18px; font-size: 13px; line-height: 1.6; }
+.dsa-card-body strong { color: var(--brand); }
+
+/* ── API table latency ── */
+td.latency { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--teal); }
+
+/* ── Schema table ── */
+.schema-table { width: 100%; border-collapse: collapse; margin: 12px 0 28px; font-size: 13px; }
+.schema-table thead tr { background: #1E293B; }
+.schema-table thead th { padding: 10px 14px; text-align: left; color: white; font-size: 12px; font-weight: 600; }
+.schema-table tbody tr:nth-child(even) { background: var(--light); }
+.schema-table tbody td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+.schema-table tbody td:first-child { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 500; }
+.schema-table tbody td:nth-child(2) { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--purple); }
+.schema-table tbody td:nth-child(3) { font-size: 11px; color: var(--coral); font-family: 'DM Mono', monospace; }
+
+/* ── Resume bullets ── */
+.resume-bullet {
+  background: #F8FAFC;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+  margin: 12px 0;
+  font-size: 14px; line-height: 1.7;
+  color: var(--text);
+}
+
+/* ── Interview QA ── */
+.qa-item { margin: 20px 0; }
+.qa-q {
+  font-weight: 700; color: var(--brand);
+  font-size: 14px; margin-bottom: 8px;
+}
+.qa-q::before { content: 'Q: '; color: var(--accent); }
+.qa-a { font-size: 14px; color: var(--text); line-height: 1.7; padding-left: 20px; border-left: 2px solid var(--border); }
+
+/* ── Print ── */
+@media print {
+  body { background: white; }
+  .cover { min-height: auto; padding: 60px; page-break-after: always; }
+  .section { page-break-inside: avoid; padding: 40px 60px; }
+  .toc { page-break-after: always; }
+  pre { background: #F1F5F9 !important; color: #1E293B !important; }
+}
+
+@media (max-width: 768px) {
+  .cover { padding: 40px; }
+  .cover h1 { font-size: 56px; }
+  .section { padding: 40px; }
+  .toc { padding: 40px; }
+  .dsa-grid { grid-template-columns: 1fr; }
+  .toc-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══ COVER ══ -->
+<div class="cover">
+  <div class="cover-tag">Project Document · Version 1.0 · 2026</div>
+  <h1>LendIQ</h1>
+  <p class="cover-sub">Intelligent Credit Scoring & Loan Routing Engine — a production-grade fintech backend combining custom DSA, streaming ML, and regulatory-grade audit infrastructure.</p>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>Stack</strong>Java 21 + Python 3.11</div>
+    <div class="cover-meta-item"><strong>Throughput</strong>10K apps / min</div>
+    <div class="cover-meta-item"><strong>Latency</strong>p99 &lt; 200ms</div>
+    <div class="cover-meta-item"><strong>Models</strong>LightGBM + GNN + AIF360</div>
+  </div>
+  <div class="tech-pills">
+    <span class="pill">Java 21</span><span class="pill">Spring Boot</span><span class="pill">Kafka</span>
+    <span class="pill">Redis</span><span class="pill">PostgreSQL</span><span class="pill">Python 3.11</span>
+    <span class="pill">LightGBM</span><span class="pill">PyTorch GNN</span><span class="pill">gRPC</span>
+    <span class="pill">Airflow</span><span class="pill">Docker</span><span class="pill">Kubernetes</span>
+  </div>
+</div>
+
+<!-- ══ TOC ══ -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#s1" class="toc-item"><span class="toc-num">01</span> Project Overview</a>
+    <a href="#s6" class="toc-item"><span class="toc-num">06</span> API Reference</a>
+    <a href="#s2" class="toc-item"><span class="toc-num">02</span> System Architecture</a>
+    <a href="#s7" class="toc-item"><span class="toc-num">07</span> UI Screens & User Flows</a>
+    <a href="#s3" class="toc-item"><span class="toc-num">03</span> DSA Implementations</a>
+    <a href="#s8" class="toc-item"><span class="toc-num">08</span> Implementation Guide</a>
+    <a href="#s4" class="toc-item"><span class="toc-num">04</span> ML Pipeline</a>
+    <a href="#s9" class="toc-item"><span class="toc-num">09</span> Non-Functional Requirements</a>
+    <a href="#s5" class="toc-item"><span class="toc-num">05</span> Database Schema</a>
+    <a href="#s10" class="toc-item"><span class="toc-num">10</span> Resume Presentation</a>
+    <a href="#s11" class="toc-item"><span class="toc-num">11</span> Repository Layer</a>
+    <a href="#s15" class="toc-item"><span class="toc-num">15</span> Exception Handling</a>
+    <a href="#s12" class="toc-item"><span class="toc-num">12</span> DTOs — Request &amp; Response</a>
+    <a href="#s16" class="toc-item"><span class="toc-num">16</span> Security Configuration</a>
+    <a href="#s13" class="toc-item"><span class="toc-num">13</span> Mappers</a>
+    <a href="#s17" class="toc-item"><span class="toc-num">17</span> Kafka Event Schemas</a>
+    <a href="#s14" class="toc-item"><span class="toc-num">14</span> Service Interfaces</a>
+    <a href="#s18" class="toc-item"><span class="toc-num">18</span> Configuration &amp; Properties</a>
+  </div>
+</div>
+
+<!-- ══ S1: OVERVIEW ══ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h1>Project Overview</h1>
+  </div>
+
+  <table class="info-table">
+    <tr><td>Project Name</td><td><strong>LendIQ</strong> — Intelligent Credit Scoring &amp; Loan Routing Engine</td></tr>
+    <tr><td>Problem Statement</td><td>Score thousands of loan applications per second, detect fraud in real time, and route each application to the best-fit lender in under 200ms — with full regulatory auditability.</td></tr>
+    <tr><td>Primary Goal</td><td>Build a production-grade fintech backend combining custom DSA implementations, three complementary ML models, and a high-throughput Kafka streaming architecture.</td></tr>
+    <tr><td>Target Users</td><td>Fintech companies, NBFC platforms, digital lending startups, and bank API integrations.</td></tr>
+    <tr><td>Resume Value</td><td>Custom Decision Tree + Interval Tree + Red-Black Tree in Java; LightGBM + GNN + fairness-aware ML in Python; Kafka streaming; gRPC; regulatory audit trail design.</td></tr>
+  </table>
+
+  <h2>1.1 Core Value Proposition</h2>
+  <ul>
+    <li>Sub-200ms end-to-end application scoring and lender routing</li>
+    <li>Custom DSA implementations — Interval Tree, Red-Black Tree, Decision Tree — not library wrappers</li>
+    <li>Three complementary ML models: credit scoring (LightGBM), fraud ring detection (GNN), fairness correction (AIF360)</li>
+    <li>Immutable append-only audit trail with SHAP explainability for regulatory compliance (RBI / GDPR / FCRA)</li>
+    <li>Horizontally scalable via Kafka partitioning and Kubernetes HPA</li>
+  </ul>
+
+  <h2>1.2 What Makes This Non-Trivial</h2>
+  <table class="info-table">
+    <tr><td>DSA Depth</td><td>Interval Tree, Red-Black Tree, and Decision Tree are all written from scratch in Java — not calls to <code>TreeMap</code> or sklearn.</td></tr>
+    <tr><td>ML Combination</td><td>LightGBM for scoring + GNN for fraud ring detection + AIF360 for fairness is a rare combination almost no candidate has on their resume.</td></tr>
+    <tr><td>System Design</td><td>Kafka partitioned by <code>applicant_id</code> ensures stateful stream processing without distributed coordination. ONNX in-process inference removes a network hop.</td></tr>
+    <tr><td>Compliance</td><td>Every decision is appended immutably to PostgreSQL with SHAP values stored as JSONB for regulator-readable explanations on demand.</td></tr>
+  </table>
+</div>
+
+<!-- ══ S2: ARCHITECTURE ══ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h1>System Architecture</h1>
+  </div>
+
+  <h2>2.1 High-Level Flow</h2>
+  <p>A loan application travels through four distinct layers before a decision is returned:</p>
+  <ol>
+    <li><strong>Ingestion</strong> — Java API Gateway validates, rate-limits, and publishes to Kafka after a Redis fraud pre-check (sliding window velocity).</li>
+    <li><strong>Scoring</strong> — Three parallel workers consume the Kafka topic: a custom Decision Tree (Java), a LightGBM ML service (Python gRPC), and an async GNN fraud detector (Python).</li>
+    <li><strong>Routing</strong> — Java Score Aggregator combines all scores, runs the Interval Tree lender matcher, and picks the best lender from a Red-Black Tree sorted queue.</li>
+    <li><strong>Storage</strong> — Every decision is appended to PostgreSQL (audit), documents stored in S3, velocity counters maintained in Redis.</li>
+  </ol>
+
+  <h2>2.2 Component Responsibilities</h2>
+  <table class="data-table">
+    <thead><tr><th>Component</th><th>Lang</th><th>Responsibility</th></tr></thead>
+    <tbody>
+      <tr><td>Java API Gateway</td><td>Java 21</td><td>Spring Boot REST, JWT auth, rate limiting (Bucket4j), Kafka producer</td></tr>
+      <tr><td>Redis Fraud Pre-check</td><td>Java</td><td>Sliding window velocity — flag if &gt;5 apps from same IP/device in 60 min</td></tr>
+      <tr><td>Kafka Topic: loan-apps</td><td>Kafka</td><td>Partitioned by applicant_id — same applicant always hits same consumer</td></tr>
+      <tr><td>Decision Tree Worker</td><td>Java</td><td>Custom Gini-split tree, SHAP values at leaves, serialised to JSON</td></tr>
+      <tr><td>ML Scoring Service</td><td>Python</td><td>LightGBM via gRPC, ONNX exported for in-process inference, p99 &lt; 8ms</td></tr>
+      <tr><td>GNN Fraud Detector</td><td>Python</td><td>PyTorch GNN on applicant-device-address graph, async, result joins within 50ms</td></tr>
+      <tr><td>Score Aggregator</td><td>Java</td><td>Weighted blend (40% DT + 35% ML + 25% Fairness), triggers routing</td></tr>
+      <tr><td>Interval Tree Matcher</td><td>Java</td><td>In-memory augmented BST of 1000+ lender rules, O(log n + k) query</td></tr>
+      <tr><td>Red-Black Tree Queue</td><td>Java</td><td>Keeps matched lenders sorted by match score, O(log n) insert/max</td></tr>
+      <tr><td>Webhook Publisher</td><td>Java</td><td>Async WebClient posts decision to winning lender's webhook URL</td></tr>
+      <tr><td>Airflow Pipeline</td><td>Python</td><td>Weekly drift check → retrain → shadow test → champion/challenger promote</td></tr>
+      <tr><td>PostgreSQL</td><td>—</td><td>Append-only decisions, applicants, lenders, fraud_events — full audit trail</td></tr>
+      <tr><td>S3</td><td>—</td><td>Document storage (ID, income proof), model artifact versioning</td></tr>
+      <tr><td>Redis</td><td>—</td><td>Velocity counters (sliding window), lender rule cache, session tokens</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.3 Key Design Decisions</h2>
+  <h3>Kafka partitioned by applicant_id</h3>
+  <p>All messages from the same applicant always hit the same partition and consumer. Stateful stream processing (sliding window deque) never needs distributed coordination — it lives in the consumer's local memory.</p>
+
+  <h3>ONNX in-process inference</h3>
+  <p>The LightGBM model is exported to ONNX format and loaded directly into the Python gRPC service's memory. There is no secondary network hop to a model server. This is what makes p99 &lt; 8ms achievable for ML scoring.</p>
+
+  <h3>Async GNN fraud check</h3>
+  <p>The GNN runs on a separate Kafka consumer group and publishes its result to a <code>fraud-results</code> topic. The Score Aggregator waits up to 50ms for this result — meaning GNN detection never adds more than 50ms to the critical path.</p>
+
+  <h3>Immutable audit log</h3>
+  <p>The <code>decisions</code> table is append-only — no UPDATE or DELETE is ever issued. Regulators require a tamper-proof record of every credit decision including model version, input features, SHAP values, and the lender who received the referral.</p>
+</div>
+
+<!-- ══ S3: DSA ══ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h1>DSA Implementations</h1>
+  </div>
+
+  <div class="callout">
+    <p>All five data structures below are implemented from scratch in Java. This deliberately avoids <code>TreeMap</code>, <code>SortedSet</code>, or any <code>java.util</code> substitute — the point is to demonstrate the implementation, not the import.</p>
+  </div>
+
+  <div class="dsa-grid">
+    <div class="dsa-card">
+      <div class="dsa-card-head" style="background:var(--purple)">
+        <h4>Interval Tree</h4><span class="dsa-badge">O(log n + k)</span>
+      </div>
+      <div class="dsa-card-body">
+        <strong>Where:</strong> Lender eligibility matching<br>
+        <strong>Why this one:</strong> Handles overlapping income/age ranges — no other structure does this natively. A plain BST can't answer "which intervals contain point X" efficiently.
+      </div>
+    </div>
+    <div class="dsa-card">
+      <div class="dsa-card-head" style="background:var(--coral)">
+        <h4>Red-Black Tree</h4><span class="dsa-badge">O(log n)</span>
+      </div>
+      <div class="dsa-card-body">
+        <strong>Where:</strong> Sorted lender queue by match score<br>
+        <strong>Why this one:</strong> Self-balancing guarantees worst-case O(log n) unlike a plain BST that degrades to O(n) on sorted insertions.
+      </div>
+    </div>
+    <div class="dsa-card">
+      <div class="dsa-card-head" style="background:var(--teal)">
+        <h4>Decision Tree</h4><span class="dsa-badge">O(depth)</span>
+      </div>
+      <div class="dsa-card-body">
+        <strong>Where:</strong> Interpretable credit scoring<br>
+        <strong>Why this one:</strong> Regulators require explainability — ML black-boxes cannot be the sole decision maker. SHAP values stored at each leaf.
+      </div>
+    </div>
+    <div class="dsa-card">
+      <div class="dsa-card-head" style="background:var(--amber)">
+        <h4>Sliding Window (Deque)</h4><span class="dsa-badge">O(1) amortised</span>
+      </div>
+      <div class="dsa-card-body">
+        <strong>Where:</strong> Velocity fraud detection in Redis<br>
+        <strong>Why this one:</strong> Fixed memory regardless of traffic volume — a sorted set of timestamps with O(1) eviction of expired entries.
+      </div>
+    </div>
+  </div>
+
+  <h2>3.1 Interval Tree — Lender Eligibility Matching</h2>
+  <h3>The problem</h3>
+  <p>Each lender has eligibility ranges: income 40K–120K, age 25–60, min score 650. These are intervals. Given an applicant's profile, you need all lenders whose intervals contain the applicant's values — this is the stabbing query problem.</p>
+
+  <h3>Implementation sketch (Java)</h3>
+<pre>class IntervalNode {
+    double low, high, maxHigh;  // income range + subtree max
+    LenderRule rule;
+    IntervalNode left, right;
+}
+
+List&lt;LenderRule&gt; query(double point) {
+    List&lt;LenderRule&gt; results = new ArrayList&lt;&gt;();
+    queryHelper(root, point, results);
+    return results;
+}
+
+void queryHelper(IntervalNode node, double point, List&lt;LenderRule&gt; out) {
+    if (node == null || node.maxHigh &lt; point) return;
+    if (node.low &lt;= point &amp;&amp; point &lt;= node.high) out.add(node.rule);
+    queryHelper(node.left, point, out);
+    queryHelper(node.right, point, out);
+}</pre>
+
+  <div class="callout teal">
+    <p>At startup, all ~1000 lender rules are bulk-loaded. The tree is rebuilt every 5 minutes from the <code>lenders</code> table via an Airflow task — zero downtime via atomic reference swap.</p>
+  </div>
+
+  <h2>3.2 Red-Black Tree — Sorted Lender Queue</h2>
+  <h3>What it does</h3>
+  <p>After the Interval Tree returns eligible lenders, each is assigned a composite match score: 70% credit score compatibility + 20% lender acceptance rate history + 10% fee competitiveness. The Red-Black Tree keeps this list sorted so the best-fit lender is always at the top in O(log n).</p>
+  <ul>
+    <li><code>insert(lender, matchScore)</code> — O(log n), triggers rebalancing rotations if needed</li>
+    <li><code>getMax()</code> — O(log n), returns lender with highest match score</li>
+    <li><code>delete(lenderId)</code> — O(log n), used when a lender is temporarily paused</li>
+    <li>Rotation invariants: black-height equal on all paths, no consecutive red nodes</li>
+  </ul>
+
+  <h2>3.3 Decision Tree — Interpretable Credit Scoring</h2>
+  <h3>Top features (by Gini importance)</h3>
+  <ul>
+    <li>Debt-to-income ratio (DTI) — strongest single predictor</li>
+    <li>Employment duration in months</li>
+    <li>Existing loan count and total outstanding debt</li>
+    <li>Monthly income (raw + stability score)</li>
+    <li>Loan purpose: home=1, vehicle=2, personal=3, business=4</li>
+    <li>Payment history score (0–100 from credit bureau)</li>
+  </ul>
+
+  <h3>Explainability JSON stored per decision</h3>
+<pre>{
+  "score": 724,
+  "outcome": "APPROVE",
+  "decision_path": [
+    "DTI 0.32 &lt; threshold 0.40 → proceed",
+    "employment_months 36 &gt;= 24 → proceed",
+    "existing_loans 1 &lt;= 2 → APPROVE"
+  ],
+  "shap_values": {
+    "dti": -42.3,
+    "employment_months": +18.7,
+    "income": +11.2,
+    "existing_loans": +8.4
+  }
+}</pre>
+
+  <h2>3.4 Sliding Window — Velocity Fraud Detection</h2>
+  <p>If the same IP address or device fingerprint submits more than 5 applications within a 60-minute window, the request is flagged before it even enters Kafka — saving ML inference cost on obvious fraud.</p>
+<pre>// Redis key: velocity:{ip_hash}:{device_fp}
+// Value: sorted set of timestamps
+
+boolean isVelocityFraud(String key, Instant now) {
+    long windowStart = now.minusSeconds(3600).toEpochMilli();
+    redisCommands.zremrangebyscore(key, 0, windowStart); // evict old
+    long count = redisCommands.zcard(key);
+    redisCommands.zadd(key, now.toEpochMilli(), UUID.randomUUID().toString());
+    redisCommands.expire(key, 3600);
+    return count >= VELOCITY_THRESHOLD; // threshold = 5
+}</pre>
+</div>
+
+<!-- ══ S4: ML PIPELINE ══ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h1>ML Pipeline</h1>
+  </div>
+
+  <p>Three models run in parallel on each application. Their outputs are combined by the Score Aggregator using a weighted blend. Each model is versioned, shadow-tested before promotion, and retrained weekly via Airflow.</p>
+
+  <h2>4.1 Model 1 — LightGBM Credit Scorer</h2>
+  <table class="info-table">
+    <tr><td>Model Type</td><td>LightGBM Gradient Boosted Trees (regression + binary outputs)</td></tr>
+    <tr><td>Training Data</td><td>Historical loan applications with 24-month repayment outcomes — 500K records for initial training</td></tr>
+    <tr><td>Output</td><td>Credit score 0–1000 + probability of default (0–1) + SHAP feature importances</td></tr>
+    <tr><td>Serving</td><td>ONNX Runtime in-process within Python gRPC service — no separate model server, no extra network hop</td></tr>
+    <tr><td>Performance</td><td>p99 inference &lt; 8ms, AUC-ROC &gt; 0.82 on holdout set</td></tr>
+    <tr><td>Retraining Trigger</td><td>PSI (Population Stability Index) &gt; 0.2 on any top-5 feature, or weekly scheduled regardless</td></tr>
+  </table>
+
+  <h3>Key engineered features</h3>
+  <ul>
+    <li>DTI ratio: <code>total_monthly_debt / monthly_income</code></li>
+    <li>Income stability: <code>income_std_6months / income_mean</code></li>
+    <li>Credit utilisation: <code>current_balance / credit_limit</code></li>
+    <li>Delinquency recency: months since last missed payment</li>
+    <li>Loan purpose risk bucket (home=1 → business=4)</li>
+    <li>Device trust score from velocity fraud pre-check result</li>
+  </ul>
+
+  <h2>4.2 Model 2 — PyTorch GNN Fraud Detector</h2>
+  <table class="info-table">
+    <tr><td>Model Type</td><td>Graph Attention Network (GAT) — 3 layers, 8 attention heads</td></tr>
+    <tr><td>Graph Structure</td><td>Nodes: applicants, devices, IPs, postal codes. Edges: shared attributes (same device = edge, same IP subnet = edge, same address = edge)</td></tr>
+    <tr><td>Output</td><td>Fraud probability (0–1) per applicant node + fraud ring ID if detected</td></tr>
+    <tr><td>Why GNN</td><td>Traditional ML sees applicants in isolation. GNN sees the network — 20 applicants sharing one device across 3 days is invisible to tabular ML but trivial for GNN</td></tr>
+    <tr><td>Async Execution</td><td>Runs on separate Kafka consumer group. Score Aggregator waits max 50ms then proceeds with fraud_prob=null if timeout</td></tr>
+  </table>
+
+  <h2>4.3 Model 3 — Fairness Layer (AIF360)</h2>
+  <table class="info-table">
+    <tr><td>Library</td><td>IBM AI Fairness 360 (AIF360) — open source fairness toolkit</td></tr>
+    <tr><td>Fairness Metric</td><td>Demographic parity difference: |P(approve|group A) - P(approve|group B)| &lt; 0.10</td></tr>
+    <tr><td>Protected Attributes</td><td>Gender, age group (18-25, 26-40, 41-60, 60+), geography tier (metro/tier-2/tier-3)</td></tr>
+    <tr><td>Mitigation</td><td>Reweighting training samples (pre-processing) + adversarial debiasing (in-processing)</td></tr>
+    <tr><td>Reject Inference</td><td>Semi-supervised EM algorithm to impute outcomes for historically rejected applicants — corrects selection bias in training data</td></tr>
+    <tr><td>Monitoring</td><td>Fairness metrics logged per cohort every 1000 decisions. Alert fires if parity difference &gt; 0.15</td></tr>
+  </table>
+
+  <h2>4.4 Score Aggregation &amp; Final Decision</h2>
+<pre>FinalScore = (0.40 × dt_score) + (0.35 × ml_score) + (0.25 × fairness_adjusted_score)
+
+if   fraud_prob > 0.75:   outcome = DECLINE   # hard block regardless of score
+elif FinalScore >= 700:   outcome = APPROVE
+elif FinalScore >= 550:   outcome = REFER      # manual review queue
+else:                     outcome = DECLINE</pre>
+
+  <div class="callout amber">
+    <p><strong>Note:</strong> Weights (0.40 / 0.35 / 0.25) are configurable via the admin API without redeployment. The Decision Tree weight is deliberately high to ensure regulatory explainability requirements are met.</p>
+  </div>
+
+  <h2>4.5 Airflow Retraining Pipeline (Weekly DAG)</h2>
+  <ol>
+    <li><strong>PSI Check</strong> — compare feature distributions of last 7 days vs baseline. PSI &gt; 0.2 on any top feature triggers immediate retrain.</li>
+    <li><strong>Data Prep</strong> — fetch last 90 days of decisions with known outcomes. Run feature engineering. Split 80/10/10 train/val/test.</li>
+    <li><strong>Train</strong> — retrain LightGBM, GNN, and fairness layer as parallel Airflow tasks.</li>
+    <li><strong>Evaluate</strong> — AUC-ROC, F1, demographic parity on holdout. Gate: all metrics must beat current champion.</li>
+    <li><strong>Shadow Mode</strong> — new model scores all live traffic for 24 hours without affecting decisions. Metrics compared to champion.</li>
+    <li><strong>Promote</strong> — if shadow metrics pass, swap model artifact in S3 and hot-reload gRPC service without restart.</li>
+  </ol>
+</div>
+
+<!-- ══ S5: SCHEMA ══ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h1>Database Schema</h1>
+  </div>
+
+  <h2>5.1 applicants</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>UUID</td><td>PRIMARY KEY</td><td>Applicant identifier</td></tr>
+      <tr><td>full_name</td><td>TEXT</td><td>NOT NULL</td><td>Full legal name</td></tr>
+      <tr><td>pan_hash</td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>SHA-256 of PAN/SSN — never store raw</td></tr>
+      <tr><td>income</td><td>NUMERIC(12,2)</td><td>NOT NULL</td><td>Monthly gross income</td></tr>
+      <tr><td>age</td><td>INT</td><td>CHECK age &gt; 17</td><td>Age in years</td></tr>
+      <tr><td>employment_months</td><td>INT</td><td>NOT NULL</td><td>Total months of employment history</td></tr>
+      <tr><td>existing_debt</td><td>NUMERIC(12,2)</td><td>DEFAULT 0</td><td>Sum of all existing monthly debt obligations</td></tr>
+      <tr><td>credit_bureau_score</td><td>INT</td><td>CHECK 300..900</td><td>Raw bureau score (CIBIL / Experian)</td></tr>
+      <tr><td>device_fp</td><td>TEXT</td><td>INDEXED</td><td>Device fingerprint hash</td></tr>
+      <tr><td>ip_hash</td><td>TEXT</td><td>INDEXED</td><td>Hashed IP at time of application</td></tr>
+      <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>NOT NULL DEFAULT now()</td><td>Account creation timestamp</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.2 applications</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>UUID</td><td>PRIMARY KEY</td><td>Application identifier</td></tr>
+      <tr><td>applicant_id</td><td>UUID</td><td>FK applicants.id</td><td>Reference to applicant</td></tr>
+      <tr><td>amount</td><td>NUMERIC(12,2)</td><td>NOT NULL</td><td>Requested loan amount</td></tr>
+      <tr><td>term_months</td><td>INT</td><td>NOT NULL</td><td>Requested loan tenure</td></tr>
+      <tr><td>purpose</td><td>TEXT</td><td>NOT NULL</td><td>home / vehicle / personal / business</td></tr>
+      <tr><td>status</td><td>TEXT</td><td>NOT NULL</td><td>pending / approved / declined / referred</td></tr>
+      <tr><td>source_channel</td><td>TEXT</td><td>NOT NULL</td><td>api / web / mobile / partner</td></tr>
+      <tr><td>kafka_offset</td><td>BIGINT</td><td>INDEXED</td><td>Kafka offset for exactly-once deduplication</td></tr>
+      <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>NOT NULL DEFAULT now()</td><td>Submission timestamp</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.3 decisions <span style="font-size:13px;color:var(--coral);font-family:'DM Mono',monospace;">(append-only — no UPDATE/DELETE ever)</span></h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>UUID</td><td>PRIMARY KEY</td><td>Decision identifier</td></tr>
+      <tr><td>application_id</td><td>UUID</td><td>FK applications.id</td><td>Reference to application</td></tr>
+      <tr><td>dt_score</td><td>NUMERIC(6,2)</td><td>NOT NULL</td><td>Custom Decision Tree score (0–1000)</td></tr>
+      <tr><td>ml_score</td><td>NUMERIC(6,2)</td><td>NOT NULL</td><td>LightGBM score (0–1000)</td></tr>
+      <tr><td>fairness_score</td><td>NUMERIC(6,2)</td><td>NOT NULL</td><td>Fairness-adjusted score (0–1000)</td></tr>
+      <tr><td>final_score</td><td>NUMERIC(6,2)</td><td>NOT NULL</td><td>Weighted aggregate score</td></tr>
+      <tr><td>fraud_prob</td><td>NUMERIC(5,4)</td><td>NULLABLE</td><td>GNN fraud probability (null if timeout)</td></tr>
+      <tr><td>outcome</td><td>TEXT</td><td>NOT NULL</td><td>APPROVE / DECLINE / REFER</td></tr>
+      <tr><td>lender_id</td><td>UUID</td><td>NULLABLE FK</td><td>Assigned lender (null if declined)</td></tr>
+      <tr><td>model_version</td><td>TEXT</td><td>NOT NULL</td><td>Semver of model bundle used</td></tr>
+      <tr><td>shap_json</td><td>JSONB</td><td>NOT NULL</td><td>SHAP values per feature for explainability</td></tr>
+      <tr><td>decision_path</td><td>TEXT[]</td><td>NOT NULL</td><td>Human-readable Decision Tree path</td></tr>
+      <tr><td>processing_ms</td><td>INT</td><td>NOT NULL</td><td>End-to-end latency in milliseconds</td></tr>
+      <tr><td>decided_at</td><td>TIMESTAMPTZ</td><td>NOT NULL DEFAULT now()</td><td>Decision timestamp — immutable</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.4 lenders</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>UUID</td><td>PRIMARY KEY</td><td>Lender identifier</td></tr>
+      <tr><td>name</td><td>TEXT</td><td>NOT NULL</td><td>Lender display name</td></tr>
+      <tr><td>income_min</td><td>NUMERIC(12,2)</td><td>NOT NULL</td><td>Minimum applicant income</td></tr>
+      <tr><td>income_max</td><td>NUMERIC(12,2)</td><td>NOT NULL</td><td>Maximum applicant income</td></tr>
+      <tr><td>age_min</td><td>INT</td><td>NOT NULL</td><td>Minimum applicant age</td></tr>
+      <tr><td>age_max</td><td>INT</td><td>NOT NULL</td><td>Maximum applicant age</td></tr>
+      <tr><td>score_threshold</td><td>NUMERIC(6,2)</td><td>NOT NULL</td><td>Minimum final score to qualify</td></tr>
+      <tr><td>max_loan_amount</td><td>NUMERIC(12,2)</td><td>NOT NULL</td><td>Maximum loan amount lender will fund</td></tr>
+      <tr><td>webhook_url</td><td>TEXT</td><td>NOT NULL</td><td>URL to POST approved application to</td></tr>
+      <tr><td>active</td><td>BOOLEAN</td><td>DEFAULT true</td><td>Whether lender is currently accepting referrals</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.5 fraud_events</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Constraint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>UUID</td><td>PRIMARY KEY</td><td>Event identifier</td></tr>
+      <tr><td>applicant_id</td><td>UUID</td><td>FK applicants.id</td><td>Flagged applicant</td></tr>
+      <tr><td>event_type</td><td>TEXT</td><td>NOT NULL</td><td>velocity / gnn_ring / manual_flag</td></tr>
+      <tr><td>window_count</td><td>INT</td><td>NULLABLE</td><td>Number of apps in velocity window</td></tr>
+      <tr><td>ring_id</td><td>TEXT</td><td>NULLABLE</td><td>GNN-assigned fraud ring identifier</td></tr>
+      <tr><td>fraud_prob</td><td>NUMERIC(5,4)</td><td>NULLABLE</td><td>GNN fraud probability score</td></tr>
+      <tr><td>resolved</td><td>BOOLEAN</td><td>DEFAULT false</td><td>Whether a human reviewer cleared this flag</td></tr>
+      <tr><td>detected_at</td><td>TIMESTAMPTZ</td><td>NOT NULL DEFAULT now()</td><td>Detection timestamp</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ S6: API ══ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h1>API Reference</h1>
+  </div>
+
+  <div class="callout">
+    <p>All endpoints are prefixed with <code>/api/v1</code>. Authentication uses JWT Bearer tokens. Rate limiting: 1,000 req/min per API key (standard), 10,000 req/min (enterprise).</p>
+  </div>
+
+  <h2>6.1 Application Endpoints</h2>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th><th>Latency</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-post">POST</span></td><td><code>/applications</code></td><td>Submit a new loan application</td><td>JWT Bearer</td><td class="latency">&lt; 200ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/applications/:id</code></td><td>Fetch application status and decision</td><td>JWT Bearer</td><td class="latency">&lt; 30ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/applications</code></td><td>List applications with filters (status, date)</td><td>JWT Bearer</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/applications/:id/decision</code></td><td>Full decision with SHAP values and path</td><td>JWT Bearer</td><td class="latency">&lt; 30ms</td></tr>
+      <tr><td><span class="badge badge-post">POST</span></td><td><code>/applications/:id/documents</code></td><td>Upload supporting documents to S3</td><td>JWT Bearer</td><td class="latency">&lt; 2s</td></tr>
+      <tr><td><span class="badge badge-patch">PATCH</span></td><td><code>/applications/:id/withdraw</code></td><td>Applicant withdraws pending application</td><td>JWT Bearer</td><td class="latency">&lt; 30ms</td></tr>
+    </tbody>
+  </table>
+
+  <h3>POST /applications — Request</h3>
+<pre>{
+  "applicant_id": "uuid",
+  "amount": 250000,
+  "term_months": 36,
+  "purpose": "vehicle",
+  "device_fingerprint": "abc123hash",
+  "consent_timestamp": "2026-03-20T10:00:00Z"
+}</pre>
+
+  <h3>POST /applications — Response (200 OK)</h3>
+<pre>{
+  "application_id": "uuid",
+  "status": "approved",
+  "final_score": 742,
+  "outcome": "APPROVE",
+  "lender": { "id": "uuid", "name": "FinQuick Capital" },
+  "decision_path": ["DTI 0.32 &lt; 0.40", "employment 36mo &gt;= 24mo", "APPROVE"],
+  "processing_ms": 147
+}</pre>
+
+  <h2>6.2 Lender Endpoints</h2>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th><th>Latency</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-post">POST</span></td><td><code>/lenders</code></td><td>Onboard a new lender with eligibility rules</td><td>API Key + Admin</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/lenders</code></td><td>List all active lenders</td><td>API Key</td><td class="latency">&lt; 30ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/lenders/:id</code></td><td>Get lender detail and acceptance rate</td><td>API Key</td><td class="latency">&lt; 30ms</td></tr>
+      <tr><td><span class="badge badge-put">PUT</span></td><td><code>/lenders/:id/rules</code></td><td>Update lender eligibility ranges</td><td>API Key + Admin</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-patch">PATCH</span></td><td><code>/lenders/:id/pause</code></td><td>Temporarily pause lender from referrals</td><td>API Key + Admin</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/lenders/:id/stats</code></td><td>Referral count, acceptance rate, avg score (30d)</td><td>API Key</td><td class="latency">&lt; 50ms</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.3 Scoring &amp; ML Endpoints</h2>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th><th>Latency</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-post">POST</span></td><td><code>/score/explain</code></td><td>Score an application with full SHAP breakdown</td><td>JWT Bearer</td><td class="latency">&lt; 300ms</td></tr>
+      <tr><td><span class="badge badge-post">POST</span></td><td><code>/score/batch</code></td><td>Batch score up to 100 applications (async + webhook)</td><td>API Key</td><td class="latency">&lt; 5s</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/models/current</code></td><td>Active model versions and last retrain date</td><td>Admin</td><td class="latency">&lt; 30ms</td></tr>
+      <tr><td><span class="badge badge-post">POST</span></td><td><code>/models/shadow</code></td><td>Promote shadow model to champion</td><td>Admin</td><td class="latency">&lt; 500ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/models/drift</code></td><td>Current PSI scores per feature vs baseline</td><td>Admin</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/models/fairness</code></td><td>Demographic parity metrics per cohort</td><td>Admin</td><td class="latency">&lt; 50ms</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.4 Fraud &amp; Compliance Endpoints</h2>
+  <table class="data-table">
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th><th>Latency</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/fraud/flags</code></td><td>List active fraud flags filtered by event_type</td><td>Admin</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/fraud/flags/:id</code></td><td>Detail of a specific flag with evidence</td><td>Admin</td><td class="latency">&lt; 30ms</td></tr>
+      <tr><td><span class="badge badge-patch">PATCH</span></td><td><code>/fraud/flags/:id/resolve</code></td><td>Mark fraud flag reviewed and cleared</td><td>Admin</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/audit/:application_id</code></td><td>Full immutable audit trail for a decision</td><td>Admin + Regulator</td><td class="latency">&lt; 50ms</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/audit/export</code></td><td>Export decisions CSV for regulatory submission</td><td>Admin</td><td class="latency">&lt; 30s</td></tr>
+      <tr><td><span class="badge badge-get">GET</span></td><td><code>/health</code></td><td>Service liveness + readiness check</td><td>None</td><td class="latency">&lt; 5ms</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ S7: UI ══ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h1>UI Screens &amp; User Flows</h1>
+  </div>
+
+  <p>LendIQ has three distinct frontends serving different personas. All are built in <strong>React + TypeScript + Tailwind CSS</strong>, consuming the REST API from Section 6.</p>
+
+  <h2>7.1 Applicant Portal</h2>
+  <table class="info-table">
+    <tr><td>Purpose</td><td>End applicants submit loan applications, track status, and view decision explanation.</td></tr>
+    <tr><td>Tech</td><td>React + TypeScript + Tailwind + React Query for server state management</td></tr>
+    <tr><td>Key Pages</td><td>Home / Apply / Status Tracker / Decision Explanation / Document Upload</td></tr>
+  </table>
+
+  <h3>Screen: Application Form (multi-step wizard)</h3>
+  <ul>
+    <li>Step 1 — Personal Info: name, age, PAN (masked), address</li>
+    <li>Step 2 — Employment: employer, monthly income, employment duration</li>
+    <li>Step 3 — Loan Details: amount, tenure, purpose selector</li>
+    <li>Step 4 — Consent: credit bureau consent, terms acceptance</li>
+    <li>Real-time DTI calculator updates as user types income and debt values</li>
+    <li>Device fingerprint collected silently on page load via FingerprintJS</li>
+    <li>Submit → POST /applications → polls GET /applications/:id every 2s until status != pending</li>
+  </ul>
+
+  <h3>Screen: Decision Explanation</h3>
+  <ul>
+    <li>Score meter (0–1000) with colour zones: red 0–549, amber 550–699, green 700–1000</li>
+    <li>Decision path shown as vertical timeline with plain-English translation of each split</li>
+    <li>Top 3 positive and negative SHAP factors as horizontal bar chart (Recharts)</li>
+    <li>If REFER: progress tracker + "A specialist will review within 24 hours"</li>
+    <li>If DECLINE: "How to improve" tips derived directly from the negative SHAP factors</li>
+  </ul>
+
+  <h2>7.2 Lender Dashboard</h2>
+  <table class="info-table">
+    <tr><td>Purpose</td><td>Lending partners view incoming referrals, update eligibility rules, and track analytics.</td></tr>
+    <tr><td>Tech</td><td>React + TypeScript + Tailwind + Recharts for charts, SSE for real-time referral feed</td></tr>
+    <tr><td>Key Pages</td><td>Referral Feed / Application Detail / Rules Manager / Analytics</td></tr>
+  </table>
+
+  <h3>Screen: Referral Feed</h3>
+  <ul>
+    <li>Real-time referrals via Server-Sent Events (SSE) on <code>GET /lenders/:id/referrals/stream</code></li>
+    <li>Each card: applicant score, loan amount, purpose, DTI, employment duration</li>
+    <li>Filter by score range, loan purpose, amount bracket</li>
+    <li>Accept / Decline via lender's own internal API — LendIQ only handles the routing, not the final credit decision</li>
+  </ul>
+
+  <h3>Screen: Rules Manager</h3>
+  <ul>
+    <li>Form to update <code>income_min/max</code>, <code>age_min/max</code>, <code>score_threshold</code>, <code>max_loan_amount</code></li>
+    <li>Live preview: "With these rules you'd have received N applications in the last 30 days"</li>
+    <li>Save → PUT /lenders/:id/rules → triggers Interval Tree rebuild in &lt;5 seconds</li>
+  </ul>
+
+  <h2>7.3 Admin Operations Dashboard</h2>
+  <table class="info-table">
+    <tr><td>Purpose</td><td>Internal team monitors system health, ML model status, fraud flags, and compliance exports.</td></tr>
+    <tr><td>Tech</td><td>React + TypeScript + Tailwind + Recharts + AG Grid for data tables</td></tr>
+    <tr><td>Key Pages</td><td>System Health / Model Monitor / Fraud Queue / Audit Trail / Fairness Report</td></tr>
+  </table>
+
+  <h3>Screen: Model Monitor</h3>
+  <ul>
+    <li>PSI chart per feature — line chart over 30 days with red threshold line at 0.2</li>
+    <li>Champion vs Shadow model comparison table: AUC-ROC, F1, demographic parity diff</li>
+    <li>"Promote Shadow" button → POST /models/shadow (requires two-admin approval)</li>
+    <li>Retraining history log: timestamp, trigger reason, metric deltas from champion</li>
+  </ul>
+
+  <h3>Screen: Fraud Queue</h3>
+  <ul>
+    <li>Table of active fraud flags filterable by event_type (velocity / gnn_ring / manual)</li>
+    <li>Click flag → detail drawer with evidence: ring visualisation (D3 force graph) for GNN flags, velocity chart for sliding window flags</li>
+    <li>"Clear" button → PATCH /fraud/flags/:id/resolve with required reviewer notes</li>
+  </ul>
+
+  <h3>Screen: Fairness Report</h3>
+  <ul>
+    <li>Approval rate heatmap per cohort (gender × age_group × geo_tier)</li>
+    <li>Alert banner if any cohort pair exceeds 10% parity gap</li>
+    <li>Monthly trend chart per protected attribute</li>
+    <li>PDF export for regulatory submission</li>
+  </ul>
+</div>
+
+<!-- ══ S8: IMPLEMENTATION ══ -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h1>Implementation Guide</h1>
+  </div>
+
+  <h2>8.1 Repository Structure</h2>
+<pre>lendiq/
+├── api-gateway/              # Java 21 Spring Boot
+│   ├── src/main/java/com/lendiq/
+│   │   ├── controller/       # REST controllers
+│   │   ├── service/          # Business logic
+│   │   ├── dsa/              # IntervalTree, RBTree, DecisionTree, SlidingWindow
+│   │   ├── kafka/            # Producer + Consumer configs
+│   │   └── entity/           # JPA entities
+│   └── build.gradle
+├── ml-service/               # Python 3.11
+│   ├── scoring/              # LightGBM + ONNX serving
+│   ├── fraud/                # PyTorch GNN
+│   ├── fairness/             # AIF360 pipeline
+│   ├── proto/                # gRPC .proto definitions
+│   └── requirements.txt
+├── retraining/               # Airflow DAGs
+│   └── dags/
+│       ├── drift_check.py
+│       ├── retrain_pipeline.py
+│       └── shadow_promote.py
+├── frontend/                 # React + TypeScript
+│   ├── applicant/
+│   ├── lender/
+│   └── admin/
+├── infra/
+│   ├── docker-compose.yml
+│   └── k8s/                  # Kubernetes manifests
+└── docs/</pre>
+
+  <h2>8.2 Week-by-Week Build Plan</h2>
+  <div class="week-grid">
+    <div class="week-card">
+      <div class="week-label" style="background:var(--brand)">Week<span>1</span></div>
+      <div class="week-body">
+        <h4>Infrastructure + Ingestion</h4>
+        <p>Java API Gateway (Spring Boot), Kafka topics, PostgreSQL schema with all 5 tables, Redis setup, Docker Compose with all services running locally</p>
+        <span class="week-done">POST /applications returns 202 and message appears in Kafka topic</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-label" style="background:var(--purple)">Week<span>2</span></div>
+      <div class="week-body">
+        <h4>DSA Layer (Java)</h4>
+        <p><code>IntervalTree.java</code>, <code>RedBlackTree.java</code>, <code>DecisionTree.java</code> with Gini splitting, <code>SlidingWindow.java</code> backed by Redis — all with JUnit 5 tests</p>
+        <span class="week-done">Unit tests passing with 95%+ coverage on all DSA classes</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-label" style="background:var(--teal)">Week<span>3</span></div>
+      <div class="week-body">
+        <h4>ML Scoring Service</h4>
+        <p>LightGBM training notebook, ONNX export, Python gRPC server, fairness layer with AIF360, SHAP integration, Dockerfile for ML service</p>
+        <span class="week-done">gRPC call returns score in &lt; 8ms on local machine</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-label" style="background:var(--coral)">Week<span>4</span></div>
+      <div class="week-body">
+        <h4>GNN + Aggregator + Routing</h4>
+        <p>PyTorch GNN training + async Kafka consumer, Score Aggregator Java service, Interval Tree + RBTree lender routing wired end-to-end, Webhook publisher</p>
+        <span class="week-done">POST /applications returns decision in &lt; 300ms on local machine</span>
+      </div>
+    </div>
+    <div class="week-card">
+      <div class="week-label" style="background:var(--amber)">Week<span>5</span></div>
+      <div class="week-body">
+        <h4>Retraining + Frontend + Deploy</h4>
+        <p>Airflow DAGs for drift check and retrain, React applicant portal and admin dashboard, load testing with Gatling, Kubernetes manifests for all services</p>
+        <span class="week-done">10K req/min sustained with p99 &lt; 200ms on k8s cluster</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>8.3 Key Dependencies</h2>
+  <table class="data-table">
+    <thead><tr><th>Dependency</th><th>Version</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Spring Boot</td><td>3.2</td><td>Java web framework — REST API, DI, Kafka integration</td></tr>
+      <tr><td>spring-kafka</td><td>3.1</td><td>Kafka producer/consumer abstraction for Java</td></tr>
+      <tr><td>Bucket4j</td><td>8.x</td><td>Token bucket rate limiting embedded in API Gateway</td></tr>
+      <tr><td>lightgbm</td><td>4.x</td><td>Gradient boosted trees — primary credit score model</td></tr>
+      <tr><td>onnxruntime</td><td>1.17</td><td>In-process ONNX inference — no model server needed</td></tr>
+      <tr><td>torch-geometric</td><td>2.5</td><td>PyTorch extension for GNN — Graph Attention Networks</td></tr>
+      <tr><td>aif360</td><td>0.6</td><td>IBM AI Fairness 360 — bias detection and mitigation</td></tr>
+      <tr><td>shap</td><td>0.44</td><td>SHAP feature importance for LightGBM explainability</td></tr>
+      <tr><td>grpcio</td><td>1.63</td><td>Python gRPC server for ML ↔ Java communication</td></tr>
+      <tr><td>apache-airflow</td><td>2.9</td><td>DAG orchestration for ML retraining pipeline</td></tr>
+    </tbody>
+  </table>
+
+  <h2>8.4 Environment Variables</h2>
+<pre># Java API Gateway
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/lendiq
+SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+REDIS_HOST=localhost
+REDIS_PORT=6379
+JWT_SECRET=&lt;256-bit-secret&gt;
+ML_SERVICE_HOST=localhost:50051
+AWS_S3_BUCKET=lendiq-documents
+VELOCITY_THRESHOLD=5
+VELOCITY_WINDOW_SECONDS=3600
+
+# Python ML Service
+MODEL_PATH=s3://lendiq-models/champion/lgbm.onnx
+GNN_MODEL_PATH=s3://lendiq-models/champion/gnn.pt
+GRPC_PORT=50051
+KAFKA_BOOTSTRAP=localhost:9092
+FRAUD_TOPIC=fraud-results</pre>
+</div>
+
+<!-- ══ S9: NFR ══ -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h1>Non-Functional Requirements</h1>
+  </div>
+
+  <h2>9.1 Performance Targets</h2>
+  <table class="info-table">
+    <tr><td>End-to-end p99</td><td>&lt; 200ms (Kafka publish + scoring + routing + DB write)</td></tr>
+    <tr><td>ML inference p99</td><td>&lt; 8ms (LightGBM ONNX in-process)</td></tr>
+    <tr><td>Fraud pre-check</td><td>&lt; 2ms (Redis sorted set operation)</td></tr>
+    <tr><td>Lender routing</td><td>&lt; 5ms (Interval Tree + RBTree in-memory)</td></tr>
+    <tr><td>Throughput</td><td>10,000 applications per minute sustained</td></tr>
+    <tr><td>Kafka consumer lag</td><td>&lt; 500ms at peak throughput</td></tr>
+  </table>
+
+  <h2>9.2 Scalability</h2>
+  <ul>
+    <li>Kafka partitioning by <code>applicant_id</code> — add consumer instances to scale horizontally with zero coordination overhead</li>
+    <li>Java API Gateway is fully stateless — scale with Kubernetes HPA on CPU/RPS metric</li>
+    <li>Redis cluster mode for velocity counters at &gt;100K req/min</li>
+    <li>PostgreSQL read replicas for audit trail read endpoints</li>
+    <li>Interval Tree and RBTree are in-memory per JVM instance — lender count bounded at ~10K before sharding is needed</li>
+  </ul>
+
+  <h2>9.3 Security</h2>
+  <ul>
+    <li>PAN/SSN stored only as SHA-256 hash — never plaintext, never logged</li>
+    <li>All API traffic over TLS 1.3 minimum</li>
+    <li>JWT tokens expire in 1 hour; refresh tokens in 7 days</li>
+    <li>S3 documents accessed via pre-signed URLs (15-minute expiry)</li>
+    <li>Kafka inter-service communication over mTLS</li>
+    <li>Admin endpoints require JWT + IP allowlist</li>
+  </ul>
+
+  <h2>9.4 Observability</h2>
+  <ul>
+    <li>Prometheus metrics via Micrometer (Java) and prometheus_client (Python)</li>
+    <li>Key metrics: <code>kafka_consumer_lag</code>, <code>decision_latency_p99</code>, <code>model_score_distribution</code>, <code>fraud_flag_rate</code></li>
+    <li>Grafana dashboards: System Health, ML Performance, Business Metrics, Fraud Overview</li>
+    <li>Structured JSON logs (logstash format) → ELK stack</li>
+    <li>OpenTelemetry distributed tracing — trace ID propagated from Gateway through Kafka to ML service</li>
+    <li>Alerts: p99 &gt; 300ms, consumer lag &gt; 1s, fraud rate spike 3×, model PSI &gt; 0.2</li>
+  </ul>
+</div>
+
+<!-- ══ S10: RESUME ══ -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h1>Resume Presentation</h1>
+  </div>
+
+  <h2>10.1 Resume Bullet Points</h2>
+  <div class="resume-bullet">
+    Built a real-time loan scoring engine (LendIQ) processing 10K applications/min — implemented Interval Tree, Red-Black Tree, and Decision Tree from scratch in Java for lender routing and interpretable credit scoring.
+  </div>
+  <div class="resume-bullet">
+    Designed a three-model ML pipeline (LightGBM + PyTorch GNN + AIF360) for credit scoring, fraud ring detection, and fairness correction, serving decisions via ONNX in-process inference at p99 &lt; 8ms over gRPC.
+  </div>
+  <div class="resume-bullet">
+    Architected a Kafka-partitioned streaming pipeline (Java + Python microservices) with immutable PostgreSQL audit trail, SHAP explainability, and Airflow-based weekly retraining with PSI drift detection.
+  </div>
+
+  <h2>10.2 Interview Q&amp;A</h2>
+  <div class="qa-item">
+    <div class="qa-q">"Tell me about a complex DSA problem you solved"</div>
+    <div class="qa-a">Walk through the Interval Tree: why a plain sorted list doesn't work for overlapping ranges, how the augmented BST with <code>maxHigh</code> solves the stabbing query in O(log n + k), and how it gives a clean O(n log n) bulk-load at startup for 1000 lenders.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"How did you handle the ML explainability requirement?"</div>
+    <div class="qa-a">Dual scoring: the Decision Tree provides the regulatory-grade explanation path and SHAP values at each leaf. LightGBM provides accuracy. The two are blended. Regulators can read: "Your DTI of 0.38 reduced your score by 42 points" — that comes from the Decision Tree's SHAP output, not the LightGBM black-box.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"How does your system scale to 10K req/min?"</div>
+    <div class="qa-a">Kafka partitioned by <code>applicant_id</code> means stateful stream processing without coordination — add consumer pods and throughput scales linearly. Java API is stateless behind k8s HPA. ONNX in-process removes the model server network hop. Interval Tree and RBTree are in-memory so routing adds &lt;5ms.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"How did you handle bias in the ML model?"</div>
+    <div class="qa-a">AIF360 demographic parity check at training time. If parity difference between any two cohorts exceeds 10%, the pipeline applies reweighting and adversarial debiasing before retraining. Reject inference via semi-supervised EM fixes the selection bias in historical data where rejected applicants have no outcome labels.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"What would you do differently at 10× scale?"</div>
+    <div class="qa-a">Replace the in-memory Interval Tree with Hazelcast distributed cache so lender rules are shared across all JVM instances. Add a feature store (Feast) to share feature computation between online scoring and offline training. Move the GNN to a dedicated GPU inference server instead of CPU-based async processing.</div>
+  </div>
+</div>
+
+
+<!-- ══ S11: REPOSITORIES ══ -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h1>Repository Layer</h1>
+  </div>
+
+  <div class="callout">
+    <p><strong>Pattern:</strong> All repositories extend <code>JpaRepository</code> for CRUD + pagination, and <code>JpaSpecificationExecutor</code> where dynamic filtering is required. Custom JPQL queries use <code>@Query</code>. Read-heavy endpoints target a <code>@Qualifier("readReplica")</code> datasource.</p>
+  </div>
+
+  <h2>11.1 Repository Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/
+└── repository/
+    ├── ApplicantRepository.java
+    ├── ApplicationRepository.java
+    ├── DecisionRepository.java
+    ├── LenderRepository.java
+    ├── FraudEventRepository.java
+    └── spec/
+        ├── ApplicationSpec.java      ← JPA Specifications for dynamic filter queries
+        └── FraudEventSpec.java</pre>
+
+  <h2>11.2 ApplicantRepository</h2>
+<pre>package com.lendiq.repository;
+
+import com.lendiq.entity.Applicant;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import java.util.*;
+
+@Repository
+public interface ApplicantRepository extends JpaRepository&lt;Applicant, UUID&gt; {
+
+    // Used during onboarding — PAN uniqueness check before persist
+    Optional&lt;Applicant&gt; findByPanHash(String panHash);
+
+    // Fraud ring graph: all applicants sharing the same device fingerprint
+    @Query("SELECT a FROM Applicant a WHERE a.deviceFp = :deviceFp AND a.id != :excludeId")
+    List&lt;Applicant&gt; findByDeviceFpExcluding(String deviceFp, UUID excludeId);
+
+    // Fraud ring graph: all applicants sharing the same IP hash
+    List&lt;Applicant&gt; findByIpHash(String ipHash);
+
+    // ML pipeline batch scoring: pull feature set for a list of applicant IDs
+    @Query("SELECT a FROM Applicant a WHERE a.id IN :ids")
+    List&lt;Applicant&gt; findAllByIdIn(List&lt;UUID&gt; ids);
+
+    boolean existsByPanHash(String panHash);
+}</pre>
+
+  <h2>11.3 ApplicationRepository</h2>
+<pre>package com.lendiq.repository;
+
+import com.lendiq.entity.Application;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
+import java.time.Instant;
+import java.util.*;
+
+@Repository
+public interface ApplicationRepository
+        extends JpaRepository&lt;Application, UUID&gt;,
+                JpaSpecificationExecutor&lt;Application&gt; {
+
+    // Status polling by applicant — GET /applications list
+    Page&lt;Application&gt; findByApplicantIdOrderByCreatedAtDesc(UUID applicantId, Pageable pageable);
+
+    // Exactly-once deduplication: check if this Kafka offset was already consumed
+    boolean existsByKafkaOffset(long kafkaOffset);
+
+    // Batch scoring: pull up to 100 pending apps in arrival order
+    List&lt;Application&gt; findTop100ByStatusOrderByCreatedAtAsc(String status);
+
+    // Audit export: all applications in a date range for regulatory CSV
+    @Query("""
+        SELECT ap FROM Application ap
+        WHERE ap.createdAt BETWEEN :from AND :to
+        ORDER BY ap.createdAt ASC
+    """)
+    List&lt;Application&gt; findByCreatedAtBetween(Instant from, Instant to);
+
+    // Admin dashboard tiles: count by status
+    @Query("SELECT ap.status, COUNT(ap) FROM Application ap GROUP BY ap.status")
+    List&lt;Object[]&gt; countGroupByStatus();
+
+    // Ownership-aware lookup: applicant can only fetch their own record
+    Optional&lt;Application&gt; findByIdAndApplicantId(UUID id, UUID applicantId);
+}</pre>
+
+  <div class="callout teal">
+    <p><strong>JPA Specification for dynamic filters</strong> — <code>GET /applications</code> accepts optional params (<code>status</code>, <code>from</code>, <code>to</code>, <code>channel</code>). <code>ApplicationSpec</code> builds the <code>Predicate</code> dynamically rather than requiring N overloaded query methods.</p>
+  </div>
+
+<pre>// ApplicationSpec.java
+package com.lendiq.repository.spec;
+
+import com.lendiq.dto.request.ApplicationFilterRequest;
+import com.lendiq.entity.Application;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ApplicationSpec {
+
+    public static Specification&lt;Application&gt; withFilters(ApplicationFilterRequest f) {
+        return (root, query, cb) -&gt; {
+            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();
+
+            if (f.getStatus() != null)
+                predicates.add(cb.equal(root.get("status"), f.getStatus()));
+            if (f.getFrom() != null)
+                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), f.getFrom()));
+            if (f.getTo() != null)
+                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), f.getTo()));
+            if (f.getChannel() != null)
+                predicates.add(cb.equal(root.get("sourceChannel"), f.getChannel()));
+            if (f.getApplicantId() != null)
+                predicates.add(cb.equal(root.get("applicantId"), f.getApplicantId()));
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+}</pre>
+
+  <h2>11.4 DecisionRepository</h2>
+<pre>package com.lendiq.repository;
+
+import com.lendiq.entity.Decision;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
+import java.time.Instant;
+import java.util.*;
+
+@Repository
+public interface DecisionRepository extends JpaRepository&lt;Decision, UUID&gt; {
+
+    // Primary audit trail lookup
+    Optional&lt;Decision&gt; findByApplicationId(UUID applicationId);
+
+    // Admin dashboard: latest 50 decisions for the timeline widget
+    List&lt;Decision&gt; findTop50ByOrderByDecidedAtDesc();
+
+    // ML retraining: decisions since a cutoff for PSI drift calculation
+    @Query("SELECT d FROM Decision d WHERE d.decidedAt &gt;= :since AND d.modelVersion = :version")
+    List&lt;Decision&gt; findByModelVersionSince(String version, Instant since);
+
+    // Fairness monitoring: aggregate approval rates for a time window
+    @Query("""
+        SELECT d.outcome, COUNT(d)
+        FROM Decision d
+        WHERE d.decidedAt &gt;= :since
+        GROUP BY d.outcome
+    """)
+    List&lt;Object[]&gt; countOutcomesSince(Instant since);
+
+    // IMPORTANT: No @Modifying update/delete methods defined here.
+    // The decisions table is append-only — this interface enforces it.
+}</pre>
+
+  <h2>11.5 LenderRepository</h2>
+<pre>package com.lendiq.repository;
+
+import com.lendiq.entity.Lender;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import java.time.Instant;
+import java.util.*;
+
+@Repository
+public interface LenderRepository extends JpaRepository&lt;Lender, UUID&gt; {
+
+    // Interval Tree startup load — only active lenders are loaded into memory
+    List&lt;Lender&gt; findByActiveTrue();
+
+    // 30-day referral + approval analytics for GET /lenders/:id/stats
+    @Query("""
+        SELECT l.id, l.name,
+               COUNT(d.id) AS referrals,
+               SUM(CASE WHEN d.outcome = 'APPROVE' THEN 1 ELSE 0 END) AS approvals
+        FROM Lender l
+        LEFT JOIN Decision d ON d.lenderId = l.id AND d.decidedAt &gt;= :since
+        WHERE l.active = true
+        GROUP BY l.id, l.name
+    """)
+    List&lt;Object[]&gt; findLenderStatsSince(Instant since);
+
+    // Used after PUT /lenders/:id/rules to trigger Interval Tree rebuild
+    Optional&lt;Lender&gt; findByIdAndActiveTrue(UUID id);
+}</pre>
+
+  <h2>11.6 FraudEventRepository</h2>
+<pre>package com.lendiq.repository;
+
+import com.lendiq.entity.FraudEvent;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
+import java.util.*;
+
+@Repository
+public interface FraudEventRepository
+        extends JpaRepository&lt;FraudEvent, UUID&gt;,
+                JpaSpecificationExecutor&lt;FraudEvent&gt; {
+
+    // Admin queue: unresolved flags, newest first
+    Page&lt;FraudEvent&gt; findByResolvedFalseOrderByDetectedAtDesc(Pageable pageable);
+
+    // Filter by event type: velocity / gnn_ring / manual_flag
+    Page&lt;FraudEvent&gt; findByEventTypeAndResolvedFalse(String eventType, Pageable pageable);
+
+    // Pre-routing check: block if applicant has any active unresolved flags
+    boolean existsByApplicantIdAndResolvedFalse(UUID applicantId);
+
+    // Fraud ring detail: all events sharing a GNN ring ID (for the D3 visualisation)
+    List&lt;FraudEvent&gt; findByRingId(String ringId);
+
+    // Resolve — the ONLY allowed mutation on this table
+    @Modifying
+    @Query("UPDATE FraudEvent fe SET fe.resolved = true WHERE fe.id = :id")
+    int resolveFlag(UUID id);
+}</pre>
+</div>
+
+
+<!-- ══ S12: DTOs ══ -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <h1>DTOs — Request &amp; Response</h1>
+  </div>
+
+  <div class="callout">
+    <p><strong>Convention:</strong> All DTOs live in <code>com.lendiq.dto</code>. Request DTOs carry <code>jakarta.validation</code> annotations. Response DTOs are plain Java records (immutable). Mappers (Section 13) handle entity ↔ DTO conversion — controllers never touch entities directly.</p>
+  </div>
+
+  <h2>12.1 DTO Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/dto/
+├── request/
+│   ├── ApplicationSubmitRequest.java
+│   ├── ApplicationFilterRequest.java
+│   ├── LenderOnboardRequest.java
+│   ├── LenderRulesUpdateRequest.java
+│   ├── FraudFlagResolveRequest.java
+│   └── BatchScoreRequest.java
+└── response/
+    ├── ApplicationSubmitResponse.java
+    ├── ApplicationDetailResponse.java
+    ├── DecisionResponse.java
+    ├── LenderResponse.java
+    ├── LenderStatsResponse.java
+    ├── FraudFlagResponse.java
+    ├── AuditTrailResponse.java
+    ├── ModelStatusResponse.java
+    └── PagedResponse.java          ← Generic wrapper for all paginated results</pre>
+
+  <h2>12.2 Request DTOs</h2>
+
+  <h3>ApplicationSubmitRequest</h3>
+<pre>package com.lendiq.dto.request;
+
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+
+public record ApplicationSubmitRequest(
+
+    @NotNull(message = "applicant_id is required")
+    UUID applicantId,
+
+    @NotNull @DecimalMin("1000") @DecimalMax("10000000")
+    BigDecimal amount,                       // loan amount in INR
+
+    @NotNull @Min(3) @Max(360)
+    Integer termMonths,
+
+    @NotBlank @Pattern(regexp = "home|vehicle|personal|business")
+    String purpose,
+
+    @NotBlank @Size(max = 128)
+    String deviceFingerprint,               // FingerprintJS hash from browser
+
+    @NotNull @PastOrPresent
+    Instant consentTimestamp                // credit bureau consent timestamp
+) {}</pre>
+
+  <h3>ApplicationFilterRequest</h3>
+<pre>public record ApplicationFilterRequest(
+
+    UUID applicantId,        // optional — admin queries all; applicant sees only theirs
+
+    @Pattern(regexp = "pending|approved|declined|referred")
+    String status,
+
+    @PastOrPresent Instant from,
+    Instant to,
+
+    @Pattern(regexp = "api|web|mobile|partner")
+    String channel,
+
+    @Min(0) int page,
+    @Min(1) @Max(100) int size
+) {}</pre>
+
+  <h3>LenderOnboardRequest</h3>
+<pre>public record LenderOnboardRequest(
+
+    @NotBlank @Size(max = 200)
+    String name,
+
+    @NotNull @DecimalMin("0")    BigDecimal incomeMin,
+    @NotNull                     BigDecimal incomeMax,
+    @NotNull @Min(18) @Max(70)   Integer ageMin,
+    @NotNull @Min(18) @Max(80)   Integer ageMax,
+
+    @NotNull @DecimalMin("300") @DecimalMax("1000")
+    BigDecimal scoreThreshold,
+
+    @NotNull @DecimalMin("1000")
+    BigDecimal maxLoanAmount,
+
+    @NotBlank @Pattern(regexp = "https?://.+")
+    String webhookUrl
+) {}</pre>
+
+  <h3>LenderRulesUpdateRequest</h3>
+<pre>// PATCH-style — only fields a lender partner may self-update
+// All fields are nullable; null = "leave unchanged" (handled by MapStruct IGNORE strategy)
+public record LenderRulesUpdateRequest(
+    BigDecimal incomeMin,
+    BigDecimal incomeMax,
+    Integer ageMin,
+    Integer ageMax,
+    BigDecimal scoreThreshold,
+    BigDecimal maxLoanAmount,
+    String webhookUrl
+) {}</pre>
+
+  <h3>FraudFlagResolveRequest</h3>
+<pre>public record FraudFlagResolveRequest(
+
+    @NotBlank @Size(min = 10, max = 2000)
+    String reviewerNotes,      // mandatory — stored in audit log, must justify clearance
+
+    @NotBlank
+    String reviewedBy          // admin username pulled from JWT subject
+) {}</pre>
+
+  <h3>BatchScoreRequest</h3>
+<pre>public record BatchScoreRequest(
+
+    @NotNull @Size(min = 1, max = 100)
+    List&lt;UUID&gt; applicationIds,
+
+    @Pattern(regexp = "https?://.+")
+    String callbackWebhookUrl  // where to POST results when async batch completes
+) {}</pre>
+
+  <h2>12.3 Response DTOs</h2>
+
+  <h3>ApplicationSubmitResponse</h3>
+<pre>// Returned synchronously from POST /applications (p99 &lt; 200ms)
+public record ApplicationSubmitResponse(
+    UUID applicationId,
+    String status,              // "pending" initially; poll GET /:id for final
+    String outcome,             // APPROVE / DECLINE / REFER
+    BigDecimal finalScore,      // 0–1000
+    LenderSummary lender,       // null if declined
+    List&lt;String&gt; decisionPath,  // human-readable DT rule path
+    Integer processingMs
+) {
+    public record LenderSummary(UUID id, String name) {}
+}</pre>
+
+  <h3>ApplicationDetailResponse</h3>
+<pre>public record ApplicationDetailResponse(
+    UUID id,
+    UUID applicantId,
+    BigDecimal amount,
+    Integer termMonths,
+    String purpose,
+    String status,
+    String sourceChannel,
+    Instant createdAt,
+    DecisionSummary decision    // null while status == "pending"
+) {
+    public record DecisionSummary(
+        String outcome,
+        BigDecimal finalScore,
+        String modelVersion,
+        Instant decidedAt
+    ) {}
+}</pre>
+
+  <h3>DecisionResponse</h3>
+<pre>// Full decision from GET /applications/:id/decision
+public record DecisionResponse(
+    UUID id,
+    UUID applicationId,
+    BigDecimal dtScore,
+    BigDecimal mlScore,
+    BigDecimal fairnessScore,
+    BigDecimal finalScore,
+    BigDecimal fraudProbability,     // null if GNN timed out
+    String outcome,
+    String modelVersion,
+    Map&lt;String, Double&gt; shapValues,  // feature name → SHAP contribution
+    List&lt;String&gt; decisionPath,       // DT human-readable path
+    LenderInfo lender,               // null if declined
+    Integer processingMs,
+    Instant decidedAt
+) {
+    public record LenderInfo(UUID id, String name) {}
+}</pre>
+
+  <h3>LenderResponse</h3>
+<pre>public record LenderResponse(
+    UUID id,
+    String name,
+    BigDecimal incomeMin,
+    BigDecimal incomeMax,
+    Integer ageMin,
+    Integer ageMax,
+    BigDecimal scoreThreshold,
+    BigDecimal maxLoanAmount,
+    boolean active
+    // NOTE: webhookUrl intentionally excluded — never returned to non-admin callers
+) {}</pre>
+
+  <h3>LenderStatsResponse</h3>
+<pre>public record LenderStatsResponse(
+    UUID lenderId,
+    String lenderName,
+    long totalReferrals,
+    long approvals,
+    double acceptanceRate,     // approvals / totalReferrals
+    BigDecimal avgFinalScore,
+    Instant periodStart,
+    Instant periodEnd
+) {}</pre>
+
+  <h3>FraudFlagResponse</h3>
+<pre>public record FraudFlagResponse(
+    UUID id,
+    UUID applicantId,
+    String eventType,          // velocity / gnn_ring / manual_flag
+    Integer windowCount,       // for velocity events
+    String ringId,             // for gnn_ring events
+    BigDecimal fraudProbability,
+    boolean resolved,
+    Instant detectedAt
+) {}</pre>
+
+  <h3>AuditTrailResponse</h3>
+<pre>// GET /audit/:application_id — full regulator-facing audit bundle
+public record AuditTrailResponse(
+    UUID applicationId,
+    UUID applicantId,
+    Instant submittedAt,
+    String sourceChannel,
+    BigDecimal requestedAmount,
+    String loanPurpose,
+    DecisionResponse decision,
+    List&lt;FraudFlagResponse&gt; fraudFlags,
+    String kafkaOffset         // for exactly-once audit verification
+) {}</pre>
+
+  <h3>PagedResponse&lt;T&gt; — Generic Wrapper</h3>
+<pre>// Wraps all paginated list responses for a consistent API shape
+public record PagedResponse&lt;T&gt;(
+    List&lt;T&gt; content,
+    int page,
+    int size,
+    long totalElements,
+    int totalPages,
+    boolean last
+) {
+    public static &lt;T&gt; PagedResponse&lt;T&gt; from(Page&lt;T&gt; page) {
+        return new PagedResponse&lt;&gt;(
+            page.getContent(),
+            page.getNumber(),
+            page.getSize(),
+            page.getTotalElements(),
+            page.getTotalPages(),
+            page.isLast()
+        );
+    }
+}</pre>
+</div>
+
+
+<!-- ══ S13: MAPPERS ══ -->
+<div class="section" id="s13">
+  <div class="section-header">
+    <span class="section-num">13</span>
+    <h1>Mappers</h1>
+  </div>
+
+  <div class="callout teal">
+    <p><strong>Tool:</strong> MapStruct (<code>mapstruct:1.5</code>) with <code>componentModel = "spring"</code>. Mappers are interfaces; MapStruct generates the implementation at compile time. No manual <code>new</code> calls or setter chains anywhere in controller/service code.</p>
+  </div>
+
+  <h2>13.1 Mapper Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/mapper/
+├── ApplicationMapper.java
+├── DecisionMapper.java
+├── LenderMapper.java
+└── FraudEventMapper.java</pre>
+
+  <h2>13.2 ApplicationMapper</h2>
+<pre>package com.lendiq.mapper;
+
+import com.lendiq.dto.request.ApplicationSubmitRequest;
+import com.lendiq.dto.response.*;
+import com.lendiq.entity.*;
+import org.mapstruct.*;
+
+@Mapper(componentModel = "spring", uses = {DecisionMapper.class})
+public interface ApplicationMapper {
+
+    // DTO → Entity  (called in ApplicationServiceImpl.submit())
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", constant = "pending")
+    @Mapping(target = "kafkaOffset", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    Application toEntity(ApplicationSubmitRequest request);
+
+    // Entity → Full detail response
+    ApplicationDetailResponse toDetailResponse(Application application);
+
+    // Entity → Lighter list projection (no nested decision)
+    @Mapping(target = "decision", ignore = true)
+    ApplicationDetailResponse toListItem(Application application);
+
+    // Entity + Decision → Submit response (assembled post-scoring)
+    @Mapping(source = "application.id",        target = "applicationId")
+    @Mapping(source = "decision.outcome",      target = "outcome")
+    @Mapping(source = "decision.finalScore",   target = "finalScore")
+    @Mapping(source = "decision.processingMs", target = "processingMs")
+    ApplicationSubmitResponse toSubmitResponse(Application application, Decision decision);
+}</pre>
+
+  <h2>13.3 DecisionMapper</h2>
+<pre>package com.lendiq.mapper;
+
+import com.lendiq.dto.response.*;
+import com.lendiq.entity.Decision;
+import org.mapstruct.*;
+
+@Mapper(componentModel = "spring")
+public interface DecisionMapper {
+
+    @Mapping(source = "shapJson",      target = "shapValues")
+    @Mapping(source = "decisionPath",  target = "decisionPath")
+    @Mapping(source = "fraudProb",     target = "fraudProbability")
+    @Mapping(source = "lender.id",     target = "lender.id")
+    @Mapping(source = "lender.name",   target = "lender.name")
+    DecisionResponse toResponse(Decision decision);
+
+    // Subset embedded inside ApplicationDetailResponse
+    @Mapping(source = "outcome",      target = "outcome")
+    @Mapping(source = "finalScore",   target = "finalScore")
+    @Mapping(source = "modelVersion", target = "modelVersion")
+    @Mapping(source = "decidedAt",    target = "decidedAt")
+    ApplicationDetailResponse.DecisionSummary toSummary(Decision decision);
+}</pre>
+
+  <h2>13.4 LenderMapper</h2>
+<pre>package com.lendiq.mapper;
+
+import com.lendiq.dto.request.*;
+import com.lendiq.dto.response.LenderResponse;
+import com.lendiq.entity.Lender;
+import org.mapstruct.*;
+
+@Mapper(componentModel = "spring")
+public interface LenderMapper {
+
+    @Mapping(target = "id",     ignore = true)
+    @Mapping(target = "active", constant = "true")
+    Lender toEntity(LenderOnboardRequest request);
+
+    // webhookUrl excluded — never returned to non-admin callers
+    @Mapping(target = "webhookUrl", ignore = true)
+    LenderResponse toResponse(Lender lender);
+
+    // Partial update: only non-null fields from the request are applied
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromRequest(LenderRulesUpdateRequest request, @MappingTarget Lender lender);
+}</pre>
+
+  <h2>13.5 FraudEventMapper</h2>
+<pre>package com.lendiq.mapper;
+
+import com.lendiq.dto.response.FraudFlagResponse;
+import com.lendiq.entity.FraudEvent;
+import org.mapstruct.*;
+import java.util.List;
+
+@Mapper(componentModel = "spring")
+public interface FraudEventMapper {
+
+    @Mapping(source = "fraudProb", target = "fraudProbability")
+    FraudFlagResponse toResponse(FraudEvent event);
+
+    List&lt;FraudFlagResponse&gt; toResponseList(List&lt;FraudEvent&gt; events);
+}</pre>
+</div>
+
+
+<!-- ══ S14: SERVICE INTERFACES ══ -->
+<div class="section" id="s14">
+  <div class="section-header">
+    <span class="section-num">14</span>
+    <h1>Service Interfaces</h1>
+  </div>
+
+  <div class="callout">
+    <p><strong>Pattern:</strong> Each service is defined as a Java interface in <code>com.lendiq.service</code> with an <code>Impl</code> class alongside it. Controllers depend only on the interface. This decouples HTTP concerns from business logic and allows clean mocking in tests.</p>
+  </div>
+
+  <h2>14.1 Service Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/service/
+├── ApplicationService.java
+├── ApplicationServiceImpl.java
+├── LenderService.java
+├── LenderServiceImpl.java
+├── ScoringOrchestrationService.java
+├── ScoringOrchestrationServiceImpl.java
+├── FraudService.java
+├── FraudServiceImpl.java
+├── AuditService.java
+└── AuditServiceImpl.java</pre>
+
+  <h2>14.2 ApplicationService</h2>
+<pre>package com.lendiq.service;
+
+import com.lendiq.dto.request.*;
+import com.lendiq.dto.response.*;
+import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.UUID;
+
+public interface ApplicationService {
+
+    // POST /applications — validate, velocity pre-check, publish to Kafka
+    ApplicationSubmitResponse submit(ApplicationSubmitRequest request, String jwtSubject);
+
+    // GET /applications/:id — ownership-aware; applicant sees only their own
+    ApplicationDetailResponse getById(UUID id, UUID callerApplicantId, boolean isAdmin);
+
+    // GET /applications — paginated with dynamic filters
+    Page&lt;ApplicationDetailResponse&gt; list(ApplicationFilterRequest filter,
+                                          UUID callerApplicantId, boolean isAdmin);
+
+    // GET /applications/:id/decision — full SHAP + decision path
+    DecisionResponse getDecision(UUID applicationId, UUID callerApplicantId);
+
+    // POST /applications/:id/documents — upload to S3, return pre-signed URL
+    String uploadDocument(UUID applicationId, MultipartFile file, String documentType);
+
+    // PATCH /applications/:id/withdraw
+    void withdraw(UUID applicationId, UUID callerApplicantId);
+
+    // POST /score/batch — enqueue async batch job, return jobId
+    UUID enqueueBatchScore(BatchScoreRequest request);
+}</pre>
+
+  <h2>14.3 LenderService</h2>
+<pre>package com.lendiq.service;
+
+import com.lendiq.dto.request.*;
+import com.lendiq.dto.response.*;
+import org.springframework.data.domain.Page;
+import java.util.UUID;
+
+public interface LenderService {
+
+    LenderResponse onboard(LenderOnboardRequest request);
+    Page&lt;LenderResponse&gt; list(int page, int size);
+    LenderResponse getById(UUID id);
+
+    // PUT /lenders/:id/rules — update rules + trigger Interval Tree rebuild (&lt; 5s)
+    LenderResponse updateRules(UUID id, LenderRulesUpdateRequest request);
+
+    // PATCH /lenders/:id/pause — soft-disable, removes lender from Interval Tree
+    void pause(UUID id);
+
+    // GET /lenders/:id/stats — 30-day referral analytics
+    LenderStatsResponse getStats(UUID id);
+}</pre>
+
+  <h2>14.4 ScoringOrchestrationService</h2>
+<pre>package com.lendiq.service;
+
+import com.lendiq.entity.Decision;
+import com.lendiq.kafka.event.LoanApplicationEvent;
+import java.util.UUID;
+
+public interface ScoringOrchestrationService {
+
+    // Called by Kafka consumer after consuming from loan-apps topic.
+    // Orchestrates: DT scoring → gRPC ML call → GNN result join → aggregation → routing
+    Decision orchestrate(LoanApplicationEvent event);
+
+    // Called when GNN result arrives on fraud-results topic (async join, max 50ms wait)
+    void handleGnnResult(UUID applicationId, double fraudProbability, String ringId);
+
+    // Weighted blend: 0.40 × DT + 0.35 × ML + 0.25 × Fairness
+    double aggregateScore(double dtScore, double mlScore, double fairnessScore);
+
+    // Threshold logic: APPROVE ≥ 700 / REFER ≥ 550 / DECLINE &lt; 550 or fraud &gt; 0.75
+    String determineOutcome(double finalScore, Double fraudProbability);
+}</pre>
+
+  <h2>14.5 FraudService</h2>
+<pre>package com.lendiq.service;
+
+import com.lendiq.dto.request.FraudFlagResolveRequest;
+import com.lendiq.dto.response.FraudFlagResponse;
+import org.springframework.data.domain.Page;
+import java.util.UUID;
+
+public interface FraudService {
+
+    // Pre-Kafka: sliding window velocity check in Redis
+    // Returns true if request should be hard-blocked
+    boolean checkVelocityFraud(String ipHash, String deviceFingerprint);
+
+    // Called by GNN result consumer: persist fraud ring detection to fraud_events
+    void recordGnnFraudEvent(UUID applicantId, double fraudProbability, String ringId);
+
+    // GET /fraud/flags — paginated, optional eventType filter
+    Page&lt;FraudFlagResponse&gt; listFlags(String eventType, int page, int size);
+
+    FraudFlagResponse getFlagById(UUID id);
+
+    // PATCH /fraud/flags/:id/resolve
+    void resolveFlag(UUID id, FraudFlagResolveRequest request);
+}</pre>
+
+  <h2>14.6 AuditService</h2>
+<pre>package com.lendiq.service;
+
+import com.lendiq.dto.response.AuditTrailResponse;
+import java.time.Instant;
+import java.util.UUID;
+
+public interface AuditService {
+
+    // GET /audit/:application_id — full regulator-facing audit bundle
+    AuditTrailResponse getAuditTrail(UUID applicationId);
+
+    // GET /audit/export — generates CSV, streams to S3, returns pre-signed URL
+    String exportAuditCsv(Instant from, Instant to);
+}</pre>
+</div>
+
+
+<!-- ══ S15: EXCEPTION HANDLING ══ -->
+<div class="section" id="s15">
+  <div class="section-header">
+    <span class="section-num">15</span>
+    <h1>Exception Handling</h1>
+  </div>
+
+  <div class="callout coral">
+    <p><strong>Why this matters:</strong> Without a global handler, Spring Boot returns raw stack traces in 500 responses — a serious information leak in production. Every exception maps to a structured <code>ErrorResponse</code> with an OpenTelemetry trace ID for log correlation.</p>
+  </div>
+
+  <h2>15.1 Exception Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/exception/
+├── LendIQException.java                  ← Base runtime exception
+├── ResourceNotFoundException.java        ← 404
+├── DuplicateApplicationException.java    ← 409 (Kafka offset already processed)
+├── VelocityFraudException.java           ← 429 (velocity limit exceeded)
+├── InsufficientPermissionException.java  ← 403
+├── ScoringServiceUnavailableException.java ← 503 (gRPC call failed)
+└── GlobalExceptionHandler.java           ← @RestControllerAdvice</pre>
+
+  <h2>15.2 Base Exception</h2>
+<pre>package com.lendiq.exception;
+
+public class LendIQException extends RuntimeException {
+    private final String errorCode;
+
+    public LendIQException(String message, String errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+    public String getErrorCode() { return errorCode; }
+}</pre>
+
+  <h2>15.3 ErrorResponse DTO</h2>
+<pre>// Returned for ALL error HTTP responses — stack traces never exposed
+public record ErrorResponse(
+    String errorCode,    // e.g. "APPLICATION_NOT_FOUND", "VELOCITY_EXCEEDED"
+    String message,      // human-readable, safe to expose to clients
+    String traceId,      // OpenTelemetry trace ID for log correlation
+    Instant timestamp
+) {}</pre>
+
+  <h2>15.4 GlobalExceptionHandler</h2>
+<pre>package com.lendiq.exception;
+
+import io.opentelemetry.api.trace.Span;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import java.time.Instant;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFound(ResourceNotFoundException ex) {
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), traceId(), Instant.now());
+    }
+
+    @ExceptionHandler(DuplicateApplicationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDuplicate(DuplicateApplicationException ex) {
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), traceId(), Instant.now());
+    }
+
+    @ExceptionHandler(VelocityFraudException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorResponse handleVelocity(VelocityFraudException ex) {
+        // Intentionally vague — do not confirm velocity details to potential fraudsters
+        return new ErrorResponse("VELOCITY_EXCEEDED", "Rate limit exceeded", traceId(), Instant.now());
+    }
+
+    @ExceptionHandler(InsufficientPermissionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbidden(InsufficientPermissionException ex) {
+        return new ErrorResponse("FORBIDDEN", "Access denied", traceId(), Instant.now());
+    }
+
+    @ExceptionHandler(ScoringServiceUnavailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorResponse handleScoringDown(ScoringServiceUnavailableException ex) {
+        return new ErrorResponse("SCORING_UNAVAILABLE",
+            "Scoring service temporarily unavailable — please retry", traceId(), Instant.now());
+    }
+
+    // @Valid validation failures on request body
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+        String msg = ex.getBindingResult().getFieldErrors().stream()
+            .map(e -&gt; e.getField() + ": " + e.getDefaultMessage())
+            .collect(Collectors.joining("; "));
+        return new ErrorResponse("VALIDATION_FAILED", msg, traceId(), Instant.now());
+    }
+
+    // Catch-all — never expose exception class name or internal message
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGeneric(Exception ex) {
+        log.error("Unhandled exception [traceId={}]", traceId(), ex);
+        return new ErrorResponse("INTERNAL_ERROR", "An unexpected error occurred", traceId(), Instant.now());
+    }
+
+    private String traceId() {
+        return Span.current().getSpanContext().getTraceId();
+    }
+}</pre>
+</div>
+
+
+<!-- ══ S16: SECURITY CONFIG ══ -->
+<div class="section" id="s16">
+  <div class="section-header">
+    <span class="section-num">16</span>
+    <h1>Security Configuration</h1>
+  </div>
+
+  <div class="callout">
+    <p><strong>Why this matters:</strong> The API reference mentions JWT Bearer and API Key auth but the original doc never shows the Spring Security wiring. This section covers the <code>SecurityFilterChain</code>, JWT filter, role definitions, and the IP allowlist for admin endpoints.</p>
+  </div>
+
+  <h2>16.1 Role Definitions</h2>
+  <table class="data-table">
+    <thead><tr><th>Role</th><th>Assigned To</th><th>Accessible Endpoints</th></tr></thead>
+    <tbody>
+      <tr><td>ROLE_APPLICANT</td><td>End users via JWT</td><td>/applications (own records only), /score/explain</td></tr>
+      <tr><td>ROLE_LENDER</td><td>Lender partners via API key</td><td>/lenders/:id (own record), /lenders/:id/stats, referral stream</td></tr>
+      <tr><td>ROLE_ADMIN</td><td>Internal staff via JWT + IP allowlist</td><td>All endpoints including /audit, /fraud, /models</td></tr>
+      <tr><td>ROLE_REGULATOR</td><td>Regulatory read-only JWT</td><td>/audit/:id, /audit/export, /models/fairness</td></tr>
+    </tbody>
+  </table>
+
+  <h2>16.2 SecurityFilterChain</h2>
+<pre>package com.lendiq.config;
+
+import com.lendiq.security.*;
+import org.springframework.context.annotation.*;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           JwtAuthFilter jwtFilter,
+                                           ApiKeyAuthFilter apiKeyFilter,
+                                           AdminIpFilter adminIpFilter) throws Exception {
+        http
+            .csrf(csrf -&gt; csrf.disable())             // stateless API — CSRF not applicable
+            .sessionManagement(sm -&gt; sm.sessionCreationPolicy(STATELESS))
+            .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(adminIpFilter, JwtAuthFilter.class)
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers("/api/v1/health").permitAll()
+                .requestMatchers(POST, "/api/v1/applications").hasAnyRole("APPLICANT", "ADMIN")
+                .requestMatchers(GET,  "/api/v1/applications/**").hasAnyRole("APPLICANT", "ADMIN")
+                .requestMatchers("/api/v1/lenders/**").hasAnyRole("LENDER", "ADMIN")
+                .requestMatchers("/api/v1/audit/**").hasAnyRole("ADMIN", "REGULATOR")
+                .requestMatchers("/api/v1/fraud/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/models/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            );
+        return http.build();
+    }
+}</pre>
+
+  <h2>16.3 JwtAuthFilter</h2>
+<pre>@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    @Value("${lendiq.security.jwt-secret}") private String secret;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) throws ServletException, IOException {
+        String header = req.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(req, res); return;
+        }
+        try {
+            String token = header.substring(7);
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+            List&lt;String&gt; roles = claims.get("roles", List.class);
+            UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(
+                    claims.getSubject(), null,
+                    roles.stream().map(SimpleGrantedAuthority::new).collect(toList())
+                );
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch (JwtException e) {
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+            return;
+        }
+        chain.doFilter(req, res);
+    }
+}</pre>
+
+  <h2>16.4 AdminIpFilter</h2>
+<pre>// Applied to /api/v1/models/** and /api/v1/fraud/**
+// Rejects requests not originating from the internal VPN CIDRs
+@Component
+public class AdminIpFilter extends OncePerRequestFilter {
+
+    @Value("${lendiq.security.admin-cidrs}") private List&lt;String&gt; allowedCidrs;
+
+    private static final List&lt;String&gt; ADMIN_PATHS = List.of("/api/v1/models", "/api/v1/fraud");
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) throws ServletException, IOException {
+        boolean isAdminPath = ADMIN_PATHS.stream().anyMatch(req.getRequestURI()::startsWith);
+        if (!isAdminPath) { chain.doFilter(req, res); return; }
+
+        String callerIp = getClientIp(req);    // respects X-Forwarded-For
+        if (allowedCidrs.stream().noneMatch(cidr -&gt; IpAddressMatcher.of(cidr).matches(callerIp))) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "IP not in admin allowlist");
+            return;
+        }
+        chain.doFilter(req, res);
+    }
+}</pre>
+</div>
+
+
+<!-- ══ S17: KAFKA EVENT SCHEMAS ══ -->
+<div class="section" id="s17">
+  <div class="section-header">
+    <span class="section-num">17</span>
+    <h1>Kafka Event Schemas</h1>
+  </div>
+
+  <div class="callout teal">
+    <p><strong>Why this matters:</strong> The architecture mentions Kafka topics <code>loan-apps</code> and <code>fraud-results</code> but the original doc never defines the message schemas. These are the canonical event records serialised as JSON by producers and consumed by all downstream workers.</p>
+  </div>
+
+  <h2>17.1 Topic Summary</h2>
+  <table class="data-table">
+    <thead><tr><th>Topic</th><th>Producer</th><th>Consumers</th><th>Partition Key</th><th>Retention</th></tr></thead>
+    <tbody>
+      <tr><td>loan-apps</td><td>API Gateway</td><td>DT Worker, ML gRPC Caller, GNN Trigger</td><td>applicant_id</td><td>7 days</td></tr>
+      <tr><td>fraud-results</td><td>Python GNN Service</td><td>Score Aggregator (async join)</td><td>application_id</td><td>3 days</td></tr>
+      <tr><td>scoring-results</td><td>Score Aggregator</td><td>Webhook Publisher, DB Writer</td><td>application_id</td><td>3 days</td></tr>
+      <tr><td>lender-events</td><td>LenderService</td><td>Interval Tree Rebuilder</td><td>lender_id</td><td>1 day</td></tr>
+    </tbody>
+  </table>
+
+  <h2>17.2 Kafka Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/kafka/
+├── event/
+│   ├── LoanApplicationEvent.java
+│   ├── FraudResultEvent.java
+│   ├── ScoringResultEvent.java
+│   └── LenderChangedEvent.java
+├── producer/
+│   ├── ApplicationEventProducer.java
+│   └── ScoringResultProducer.java
+└── consumer/
+    ├── ScoringResultConsumer.java
+    └── FraudResultConsumer.java</pre>
+
+  <h2>17.3 LoanApplicationEvent — loan-apps topic</h2>
+<pre>package com.lendiq.kafka.event;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+
+// Published by API Gateway after passing velocity fraud pre-check.
+// Consumed by: DT Worker (Java), ML Scoring Trigger (Python gRPC), GNN Trigger (Python async)
+public record LoanApplicationEvent(
+
+    UUID eventId,              // unique event ID for idempotency
+    UUID applicationId,        // FK to applications table
+    UUID applicantId,          // Kafka partition key — same applicant always hits same consumer
+    long kafkaOffset,          // written back to application row for exactly-once dedup
+
+    // Loan request fields
+    BigDecimal requestedAmount,
+    int termMonths,
+    String purpose,            // home / vehicle / personal / business
+
+    // Applicant features pre-fetched here to avoid DB lookup inside Kafka consumer
+    BigDecimal monthlyIncome,
+    int ageYears,
+    int employmentMonths,
+    BigDecimal existingDebt,
+    int creditBureauScore,
+    BigDecimal dtiRatio,       // pre-computed: existingDebt / monthlyIncome
+
+    // Fraud signals
+    String ipHash,
+    String deviceFingerprint,
+    boolean velocityFlagged,   // true if Redis flagged but threshold not crossed (soft flag)
+
+    Instant submittedAt,
+    String sourceChannel
+) {}</pre>
+
+  <h2>17.4 FraudResultEvent — fraud-results topic</h2>
+<pre>// Published by Python GNN service after graph inference.
+// Consumed by Score Aggregator — async join with pending scoring result (max 50ms wait).
+public record FraudResultEvent(
+
+    UUID eventId,
+    UUID applicationId,        // join key with scoring pipeline
+    UUID applicantId,
+
+    double fraudProbability,   // 0.0–1.0 from GNN softmax
+    String ringId,             // null if no ring detected
+    boolean isFraudRing,
+    int ringSize,              // number of nodes in detected ring (0 if none)
+
+    long inferenceMs,          // GNN inference latency for observability
+    Instant processedAt
+) {}</pre>
+
+  <h2>17.5 ScoringResultEvent — scoring-results topic</h2>
+<pre>// Published by Score Aggregator after blending all model scores.
+// Consumed by: Webhook Publisher (POST to lender) and DB Writer (audit trail append).
+public record ScoringResultEvent(
+
+    UUID eventId,
+    UUID applicationId,
+    UUID applicantId,
+
+    // Individual model scores
+    double dtScore,
+    double mlScore,
+    double fairnessScore,
+    double finalScore,         // weighted blend: 0.40 DT + 0.35 ML + 0.25 Fairness
+
+    Double fraudProbability,   // null if GNN timed out
+    boolean gnnTimedOut,
+
+    String outcome,            // APPROVE / DECLINE / REFER
+
+    // Routing result
+    UUID assignedLenderId,     // null if declined
+    String assignedLenderName,
+
+    String modelVersion,
+    Map&lt;String, Double&gt; shapValues,
+    List&lt;String&gt; decisionPath,
+
+    int processingMs,
+    Instant decidedAt
+) {}</pre>
+
+  <h2>17.6 LenderChangedEvent — lender-events topic</h2>
+<pre>// Published whenever a lender's eligibility rules are created or updated.
+// Consumed by the Interval Tree Rebuilder — triggers an atomic rule reload.
+public record LenderChangedEvent(
+
+    UUID eventId,
+    UUID lenderId,
+    String changeType,        // CREATED / RULES_UPDATED / PAUSED / REACTIVATED
+
+    // New rule values (populated on CREATED or RULES_UPDATED; null otherwise)
+    BigDecimal incomeMin,
+    BigDecimal incomeMax,
+    Integer ageMin,
+    Integer ageMax,
+    BigDecimal scoreThreshold,
+    BigDecimal maxLoanAmount,
+    boolean active,
+
+    Instant changedAt
+) {}</pre>
+
+  <h2>17.7 ApplicationEventProducer</h2>
+<pre>package com.lendiq.kafka.producer;
+
+import com.lendiq.kafka.event.LoanApplicationEvent;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ApplicationEventProducer {
+
+    private final KafkaTemplate&lt;String, LoanApplicationEvent&gt; kafkaTemplate;
+
+    @Value("${kafka.topic.loan-apps}") private String topic;
+
+    public void publish(LoanApplicationEvent event) {
+        // Partition key = applicant_id — ensures same applicant hits same consumer
+        kafkaTemplate.send(topic, event.applicantId().toString(), event)
+            .whenComplete((result, ex) -&gt; {
+                if (ex != null) {
+                    log.error("Failed to publish application event [id={}]", event.applicationId(), ex);
+                    throw new ScoringServiceUnavailableException("Kafka publish failed");
+                }
+                log.info("Published loan-app event [id={}, partition={}, offset={}]",
+                    event.applicationId(),
+                    result.getRecordMetadata().partition(),
+                    result.getRecordMetadata().offset());
+            });
+    }
+}</pre>
+</div>
+
+
+<!-- ══ S18: CONFIG & PROPERTIES ══ -->
+<div class="section" id="s18">
+  <div class="section-header">
+    <span class="section-num">18</span>
+    <h1>Configuration &amp; Properties</h1>
+  </div>
+
+  <div class="callout amber">
+    <p><strong>Why this matters:</strong> The original doc only lists raw environment variables. This section adds type-safe <code>@ConfigurationProperties</code> binding, the complete <code>application.yml</code> for local development, and the full updated <code>build.gradle</code> with all missing dependencies.</p>
+  </div>
+
+  <h2>18.1 Config Package Structure</h2>
+<pre>api-gateway/src/main/java/com/lendiq/config/
+├── AppProperties.java          ← @ConfigurationProperties root record
+├── KafkaConfig.java            ← Producer/consumer bean wiring
+├── RedisConfig.java            ← Lettuce connection pool
+├── GrpcClientConfig.java       ← ML service gRPC channel setup
+├── S3Config.java               ← AWS S3 client bean
+├── SecurityConfig.java         ← (Section 16)
+└── IntervalTreeConfig.java     ← Startup lender rule loader (ApplicationRunner)</pre>
+
+  <h2>18.2 AppProperties — Type-Safe Config Binding</h2>
+<pre>package com.lendiq.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import java.util.List;
+
+@ConfigurationProperties(prefix = "lendiq")
+public record AppProperties(
+    Scoring scoring,
+    Fraud   fraud,
+    Ml      ml,
+    Security security
+) {
+    public record Scoring(
+        double dtWeight,           // default: 0.40
+        double mlWeight,           // default: 0.35
+        double fairnessWeight,     // default: 0.25
+        double approveThreshold,   // default: 700.0
+        double referThreshold,     // default: 550.0
+        double fraudHardBlock      // default: 0.75 — above this prob: DECLINE regardless of score
+    ) {}
+
+    public record Fraud(
+        int velocityThreshold,     // default: 5 apps per window
+        int velocityWindowSecs,    // default: 3600 (1 hour)
+        long gnnTimeoutMs          // default: 50 — max wait for GNN result before proceeding
+    ) {}
+
+    public record Ml(
+        String serviceHost,        // gRPC host:port for ML scoring service
+        int grpcTimeoutMs,         // default: 10ms
+        String modelBucket,        // S3 bucket for model artifacts
+        String championPath        // S3 key for champion model ONNX file
+    ) {}
+
+    public record Security(
+        String jwtSecret,
+        int jwtExpiryHours,        // default: 1
+        int refreshExpiryDays,     // default: 7
+        List&lt;String&gt; adminCidrs    // IP CIDR allowlist for /models and /fraud endpoints
+    ) {}
+}</pre>
+
+  <h2>18.3 application.yml — Local Development</h2>
+<pre>spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lendiq
+    username: lendiq_user
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 3000
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all                     # strongest durability guarantee
+      retries: 3
+    consumer:
+      group-id: lendiq-scoring
+      auto-offset-reset: earliest
+      enable-auto-commit: false     # manual ack for exactly-once semantics
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.lendiq.kafka.event"
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+
+lendiq:
+  scoring:
+    dt-weight: 0.40
+    ml-weight: 0.35
+    fairness-weight: 0.25
+    approve-threshold: 700.0
+    refer-threshold: 550.0
+    fraud-hard-block: 0.75
+
+  fraud:
+    velocity-threshold: 5
+    velocity-window-secs: 3600
+    gnn-timeout-ms: 50
+
+  ml:
+    service-host: ${ML_SERVICE_HOST:localhost:50051}
+    grpc-timeout-ms: 10
+    model-bucket: ${AWS_S3_BUCKET:lendiq-models}
+    champion-path: champion/lgbm.onnx
+
+  security:
+    jwt-secret: ${JWT_SECRET}
+    jwt-expiry-hours: 1
+    refresh-expiry-days: 7
+    admin-cidrs:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+
+kafka:
+  topic:
+    loan-apps: loan-apps
+    fraud-results: fraud-results
+    scoring-results: scoring-results
+    lender-events: lender-events
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: lendiq-api-gateway
+
+logging:
+  structured: json                  # logstash JSON format → ELK
+  level:
+    com.lendiq: INFO
+    org.springframework.kafka: WARN</pre>
+
+  <h2>18.4 Complete build.gradle</h2>
+<pre>plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+
+configurations {
+    compileOnly { extendsFrom annotationProcessor }
+}
+
+dependencies {
+    // ── Spring Boot Core ──────────────────────────────────────────────
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'   // @Valid, @NotNull
+    implementation 'org.springframework.boot:spring-boot-starter-security'     // JWT + filters
+    implementation 'org.springframework.boot:spring-boot-configuration-processor' // @ConfigurationProperties
+
+    // ── Kafka ─────────────────────────────────────────────────────────
+    implementation 'org.springframework.kafka:spring-kafka:3.1.4'
+
+    // ── Rate Limiting ─────────────────────────────────────────────────
+    implementation 'com.bucket4j:bucket4j-core:8.10.1'
+
+    // ── JWT ───────────────────────────────────────────────────────────
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly    'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly    'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // ── MapStruct ─────────────────────────────────────────────────────
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    // ── gRPC (ML service communication) ──────────────────────────────
+    implementation 'net.devh:grpc-client-spring-boot-starter:3.1.0'
+    implementation 'io.grpc:grpc-protobuf:1.63.0'
+    implementation 'io.grpc:grpc-stub:1.63.0'
+
+    // ── AWS S3 (document upload) ──────────────────────────────────────
+    implementation 'software.amazon.awssdk:s3:2.25.0'
+
+    // ── Observability ─────────────────────────────────────────────────
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:2.3.0'
+
+    // ── Database ──────────────────────────────────────────────────────
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // ── Utilities ─────────────────────────────────────────────────────
+    compileOnly    'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // ── Test ──────────────────────────────────────────────────────────
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:postgresql:1.19.7'
+    testImplementation 'org.testcontainers:kafka:1.19.7'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
+}</pre>
+
+  <h2>18.5 Final Complete Repository Structure</h2>
+<pre>lendiq/
+├── api-gateway/
+│   ├── src/main/java/com/lendiq/
+│   │   ├── controller/              ← REST controllers (from original doc)
+│   │   ├── service/                 ← Interfaces + Impl classes       ✦ Section 14
+│   │   ├── repository/              ← JPA repositories + Spec classes  ✦ Section 11
+│   │   ├── dto/
+│   │   │   ├── request/             ← Validated request DTOs           ✦ Section 12
+│   │   │   └── response/            ← Response DTOs + PagedResponse    ✦ Section 12
+│   │   ├── mapper/                  ← MapStruct mappers                ✦ Section 13
+│   │   ├── kafka/
+│   │   │   ├── event/               ← Kafka event schemas              ✦ Section 17
+│   │   │   ├── producer/            ← Kafka producers                  ✦ Section 17
+│   │   │   └── consumer/            ← Kafka consumers
+│   │   ├── exception/               ← Exception hierarchy + handler    ✦ Section 15
+│   │   ├── config/                  ← @ConfigurationProperties + beans ✦ Section 18
+│   │   ├── security/                ← JWT, API key, IP filters         ✦ Section 16
+│   │   ├── dsa/                     ← IntervalTree, RBTree, DecisionTree, SlidingWindow
+│   │   └── entity/                  ← JPA entities (from original doc)
+│   ├── src/main/resources/
+│   │   └── application.yml          ← Full config                      ✦ Section 18
+│   └── build.gradle                 ← Complete dependencies            ✦ Section 18
+├── ml-service/                      ← Python 3.11 (from original doc)
+├── retraining/                      ← Airflow DAGs (from original doc)
+├── frontend/                        ← React + TypeScript (from original doc)
+└── infra/                           ← Docker + Kubernetes (from original doc)</pre>
+</div>
+
+<!-- Footer -->
+<div style="background:var(--brand);padding:32px 80px;display:flex;justify-content:space-between;align-items:center;">
+  <span style="font-family:'DM Serif Display',serif;font-size:22px;color:white;">LendIQ</span>
+  <span style="font-size:12px;color:rgba(255,255,255,0.4);font-family:'DM Mono',monospace;">Complete Project Document · v2.0 · 2026 · Portfolio Use</span>
+</div>
+
+</div><!-- .page -->
+</body>
+</html>
